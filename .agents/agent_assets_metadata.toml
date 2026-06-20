@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "CmKh4bSZ6WtD2ykdCaZBV"
+uri = "file://artifacts/portfolio/public/images/hero-bg.png"
+type = "image"
+title = "Cinematic abstract hero background"
+
+[[generated]]
+id = "zsF6IHNzjEyEArLv4hNsL"
+uri = "file://artifacts/portfolio/public/images/project-1.png"
+type = "image"
+title = "Fashion editorial website mockup"
+
+[[generated]]
+id = "rOpbIwu41YhI9newydsCH"
+uri = "file://artifacts/portfolio/public/images/project-2.png"
+type = "image"
+title = "Avant-garde architecture mockup"
