@@ -8,7 +8,7 @@ const router: IRouter = Router();
 router.get("/experiences", async (_req, res, next) => {
   try {
     const data = await db.select().from(experiencesTable);
-    const parsed = data.map((item) => GetExperiencesResponseItem.parse(item));
+    const parsed = data.map((item: any) => GetExperiencesResponseItem.parse(item));
     res.json(parsed);
   } catch (err) {
     next(err);
