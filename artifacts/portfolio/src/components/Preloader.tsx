@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Layers, Award } from 'lucide-react';
 
@@ -6,6 +7,22 @@ interface PreloaderProps {
 }
 
 export default function Preloader({ onComplete }: PreloaderProps) {
+  const [avatar, setAvatar] = useState("/images/profile-avatar.png");
+
+  useEffect(() => {
+    fetch("/api/profile")
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error();
+      })
+      .then(data => {
+        if (data.avatar) {
+          setAvatar(data.avatar);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -69,7 +86,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 }}
               >
                 <img
-                  src="/images/profile-avatar.png"
+                  src={avatar}
                   alt="Renda Kurnia Manik Portrait"
                   className="w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] select-none"
                 />
