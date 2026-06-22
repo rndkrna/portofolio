@@ -1,13 +1,23 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Linkedin, Globe, CheckCircle2, AlertCircle } from 'lucide-react';
-import { SiGithub } from 'react-icons/si';
-import { useSubmitContactForm } from '@workspace/api-client-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowRight,
+  Linkedin,
+  Globe,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import { SiGithub } from "react-icons/si";
+import { useSubmitContactForm } from "@workspace/api-client-react";
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const submitMutation = useSubmitContactForm();
 
@@ -15,24 +25,24 @@ export default function ContactSection() {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
-    setStatus('idle');
+    setStatus("idle");
     submitMutation.mutate(
       { data: formData },
       {
         onSuccess: (res) => {
           if (res.success) {
-            setStatus('success');
-            setFormData({ name: '', email: '', message: '' });
+            setStatus("success");
+            setFormData({ name: "", email: "", message: "" });
           } else {
-            setStatus('error');
-            setErrorMessage(res.message || 'Gagal mengirim pesan.');
+            setStatus("error");
+            setErrorMessage(res.message || "Gagal mengirim pesan.");
           }
         },
         onError: (err: any) => {
-          setStatus('error');
-          setErrorMessage(err?.message || 'Terjadi kesalahan sistem.');
-        }
-      }
+          setStatus("error");
+          setErrorMessage(err?.message || "Terjadi kesalahan sistem.");
+        },
+      },
     );
   };
 
@@ -40,7 +50,7 @@ export default function ContactSection() {
     <section id="contact" className="py-32 md:py-48 relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="max-w-xl mx-auto">
-          <motion.div 
+          <motion.div
             className="text-center mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -54,7 +64,7 @@ export default function ContactSection() {
             </h2>
           </motion.div>
 
-          <motion.form 
+          <motion.form
             onSubmit={handleSubmit}
             className="space-y-6"
             initial={{ opacity: 0, y: 30 }}
@@ -63,67 +73,91 @@ export default function ContactSection() {
             transition={{ duration: 0.8 }}
           >
             <div>
-              <label htmlFor="name" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Nama</label>
-              <input 
+              <label
+                htmlFor="name"
+                className="block text-xs uppercase tracking-widest text-muted-foreground mb-2"
+              >
+                Nama
+              </label>
+              <input
                 type="text"
                 id="name"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full bg-card/20 border border-border/40 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm transition-all duration-300 font-light"
                 placeholder="Renda Kurnia Manik"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Email</label>
-              <input 
+              <label
+                htmlFor="email"
+                className="block text-xs uppercase tracking-widest text-muted-foreground mb-2"
+              >
+                Email
+              </label>
+              <input
                 type="email"
                 id="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 className="w-full bg-card/20 border border-border/40 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm transition-all duration-300 font-light"
                 placeholder="rkurniamanik@student.umrah.ac.id"
               />
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Pesan</label>
-              <textarea 
+              <label
+                htmlFor="message"
+                className="block text-xs uppercase tracking-widest text-muted-foreground mb-2"
+              >
+                Pesan
+              </label>
+              <textarea
                 id="message"
                 required
                 rows={5}
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, message: e.target.value })
+                }
                 className="w-full bg-card/20 border border-border/40 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm transition-all duration-300 font-light resize-none"
                 placeholder="Tulis pesan Anda di sini..."
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={submitMutation.isPending}
               className="w-full bg-primary hover:bg-primary/95 text-primary-foreground font-sans uppercase tracking-[0.2em] text-xs py-4 px-6 rounded-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
             >
-              {submitMutation.isPending ? 'Sending...' : 'Send Message'}
+              {submitMutation.isPending ? "Sending..." : "Send Message"}
               <ArrowRight size={14} />
             </button>
 
             <AnimatePresence>
-              {status === 'success' && (
-                <motion.div 
+              {status === "success" && (
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-sm"
                 >
                   <CheckCircle2 size={20} />
-                  <span className="text-sm font-light">Pesan Anda berhasil dikirim secara langsung ke database! Terima kasih.</span>
+                  <span className="text-sm font-light">
+                    Pesan Anda berhasil dikirim secara langsung ke database!
+                    Terima kasih.
+                  </span>
                 </motion.div>
               )}
-              {status === 'error' && (
-                <motion.div 
+              {status === "error" && (
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
@@ -152,13 +186,28 @@ export default function ContactSection() {
             viewport={{ once: true }}
             className="flex flex-col md:flex-row items-center justify-center gap-8 mt-12"
           >
-            <a href="#" className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm">
+            <a
+              href="https://github.com/rndkrna"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm"
+            >
               <SiGithub size={18} /> Github
             </a>
-            <a href="#" className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm">
+            <a
+              href="https://www.linkedin.com/in/renda-kurnia-manik-11a574338"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm"
+            >
               <Linkedin size={18} /> LinkedIn
             </a>
-            <a href="https://rendakurniamanik.vercel.app" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm">
+            <a
+              href="https://rendakurniamanik.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors hover-target uppercase tracking-widest text-sm"
+            >
               <Globe size={18} /> Website
             </a>
           </motion.div>

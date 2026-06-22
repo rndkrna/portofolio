@@ -50,7 +50,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-background z-[9999] flex items-center justify-center overflow-y-auto overflow-x-hidden py-12 md:py-0"
+      className="fixed inset-x-0 top-0 h-dvh bg-background z-[9999] flex items-start justify-start lg:items-center lg:justify-center overflow-y-auto overflow-x-hidden overscroll-contain px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8 lg:p-0"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -62,16 +62,16 @@ export default function Preloader({ onComplete }: PreloaderProps) {
         <div className="absolute -bottom-[10%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-accent/3 blur-[100px]" />
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 w-full max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div className="container mx-auto px-0 md:px-12 relative z-10 w-full max-w-6xl pb-8 sm:pb-10 lg:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
           {/* Column 1: Portrait Cover Card */}
           <motion.div
             className="lg:col-span-5 flex justify-center"
             variants={itemVariants}
           >
-            <div className="relative group max-w-sm w-full">
+            <div className="relative group w-full max-w-[14rem] sm:max-w-xs md:max-w-sm">
               {/* Outer frame border */}
-              <div className="absolute inset-0 border border-primary/20 rounded-lg -m-4 pointer-events-none group-hover:scale-[1.02] transition-transform duration-700" />
+              <div className="absolute inset-0 border border-primary/20 rounded-lg -m-2 sm:-m-4 pointer-events-none group-hover:scale-[1.02] transition-transform duration-700" />
 
               {/* Image Frame with subtle floating animation */}
               <motion.div
@@ -97,11 +97,11 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
 
                 {/* Visual Label */}
-                <div className="absolute bottom-6 left-6 right-6">
-                  <p className="text-[10px] tracking-[0.3em] uppercase text-primary mb-1 font-mono">
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+                  <p className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.3em] uppercase text-primary mb-1 font-mono">
                     Verified Portfolio
                   </p>
-                  <p className="text-sm font-display tracking-widest text-foreground uppercase">
+                  <p className="text-xs sm:text-sm font-display tracking-widest text-foreground uppercase">
                     Cover Portrait // 2026
                   </p>
                 </div>
@@ -110,13 +110,13 @@ export default function Preloader({ onComplete }: PreloaderProps) {
           </motion.div>
 
           {/* Column 2: Highlights and Enter Button */}
-          <div className="lg:col-span-7 flex flex-col justify-center items-start text-left">
+          <div className="lg:col-span-7 flex flex-col justify-center items-start text-left w-full">
             {/* Title / Name */}
-            <motion.div variants={itemVariants} className="mb-4">
-              <span className="text-primary text-xs tracking-[0.4em] uppercase font-mono block mb-2">
+            <motion.div variants={itemVariants} className="mb-3 sm:mb-4">
+              <span className="text-primary text-[10px] sm:text-xs tracking-[0.35em] sm:tracking-[0.4em] uppercase font-mono block mb-2">
                 Introduction
               </span>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display uppercase tracking-tight leading-none text-foreground">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display uppercase tracking-tight leading-none text-foreground">
                 Renda Kurnia <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40">
                   Manik
@@ -127,7 +127,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             {/* Tagline */}
             <motion.p
               variants={itemVariants}
-              className="text-muted-foreground font-light text-lg md:text-xl max-w-xl mb-10 leading-relaxed"
+              className="text-muted-foreground font-light text-base sm:text-lg md:text-xl max-w-xl mb-6 sm:mb-10 leading-relaxed"
             >
               Software Engineer & Technical Leader yang memadukan keahlian
               kriptografi modern dengan rekayasa sistem web terdistribusi.
@@ -136,12 +136,12 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             {/* Spoiler Highlights Grid */}
             <motion.div
               variants={itemVariants}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full mb-12 border-y border-border/30 py-8"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full mb-7 sm:mb-12 border-y border-border/30 py-5 sm:py-8"
             >
               {/* Highlight 1 */}
-              <div className="flex flex-col gap-3 group/hl">
-                <div className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Shield className="text-primary" size={18} />
+              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
+                  <Shield className="text-primary" size={17} />
                 </div>
                 <div>
                   <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
@@ -154,9 +154,9 @@ export default function Preloader({ onComplete }: PreloaderProps) {
               </div>
 
               {/* Highlight 2 */}
-              <div className="flex flex-col gap-3 group/hl">
-                <div className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Layers className="text-primary" size={18} />
+              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
+                  <Layers className="text-primary" size={17} />
                 </div>
                 <div>
                   <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
@@ -169,9 +169,9 @@ export default function Preloader({ onComplete }: PreloaderProps) {
               </div>
 
               {/* Highlight 3 */}
-              <div className="flex flex-col gap-3 group/hl">
-                <div className="w-10 h-10 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Award className="text-primary" size={18} />
+              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
+                  <Award className="text-primary" size={17} />
                 </div>
                 <div>
                   <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
@@ -188,7 +188,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             <motion.div variants={itemVariants} className="w-full sm:w-auto">
               <button
                 onClick={onComplete}
-                className="w-full sm:w-auto flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground font-sans uppercase tracking-[0.25em] text-xs py-4 px-10 rounded-sm transition-all duration-300 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover-target"
+                className="w-full sm:w-auto flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground font-sans uppercase tracking-[0.22em] sm:tracking-[0.25em] text-xs py-3.5 sm:py-4 px-8 sm:px-10 rounded-sm transition-all duration-300 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover-target"
               >
                 <span>Enter Portfolio</span>
                 <ArrowRight size={16} />
