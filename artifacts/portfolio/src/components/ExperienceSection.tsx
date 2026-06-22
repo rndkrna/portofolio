@@ -36,7 +36,7 @@ const fallbackExperiences = [
 
 export default function ExperienceSection() {
   const { data: dbExperiences } = useGetExperiences();
-  const displayExperiences = Array.isArray(dbExperiences) && dbExperiences.length > 0 ? dbExperiences : fallbackExperiences;
+  const displayExperiences = dbExperiences === undefined ? fallbackExperiences : dbExperiences;
 
   return (
     <section id="experience" className="py-32 bg-card/30 relative border-t border-border/40">

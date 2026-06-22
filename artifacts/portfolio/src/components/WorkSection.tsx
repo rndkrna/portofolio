@@ -29,7 +29,7 @@ const fallbackProjects = [
 
 export default function WorkSection() {
   const { data: dbProjects } = useGetProjects();
-  const displayProjects = Array.isArray(dbProjects) && dbProjects.length > 0 ? dbProjects : fallbackProjects;
+  const displayProjects = dbProjects === undefined ? fallbackProjects : dbProjects;
 
   return (
     <section id="work" className="py-32 relative">
