@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+
+Sitemap: https://rendakurniamanik.vercel.app/sitemap.xml
