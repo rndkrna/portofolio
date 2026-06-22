@@ -1,9 +1,6 @@
 import { Router } from "express";
-import fs from "fs/promises";
-import path from "path";
 
 const router = Router();
-const targetDir = path.resolve(import.meta.dirname, "../../../portfolio/public/images");
 
 router.post("/upload", async (req, res, next) => {
   try {
@@ -13,20 +10,12 @@ router.post("/upload", async (req, res, next) => {
       return;
     }
 
-    // Clean up base64 prefix if present (e.g., "data:image/png;base64,")
-    const cleanBase64 = base64.replace(/^data:image\/\w+;base64,/, "");
-    const buffer = Buffer.from(cleanBase64, "base64");
-
-    // Ensure filename is safe to prevent directory traversal
-    const safeFilename = path.basename(filename);
-    const targetPath = path.join(targetDir, safeFilename);
-
-    // Save the file
-    await fs.writeFile(targetPath, buffer);
-
+    // In serverless environments, we cannot write to the local filesystem.
+    // Instead, we return the base64 data URI directly, which will be saved
+    // in the PostgreSQL database.
     res.json({
       success: true,
-      url: `/images/${safeFilename}`
+      url: base64
     });
   } catch (err) {
     next(err);
