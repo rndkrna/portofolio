@@ -1,25 +1,36 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { useGetProjects } from '@workspace/api-client-react';
 
-const projects = [
+const fallbackProjects = [
   {
-    title: "Maison Overture",
-    category: "E-Commerce / Art Direction",
-    description: "A headless commerce experience for an avant-garde fashion house. Designed to feel like a high-end print editorial rather than a typical storefront.",
+    title: "Detik1Aceh",
+    category: "Media News Platform / Fullstack",
+    description: "Membangun platform media berita digital secara end-to-end dengan skema basis data relasional yang efisien untuk mengelola artikel, multimedia, dan proteksi admin dari serangan brute force.",
     image: "/images/project-1.png",
-    year: "2024",
+    year: "2026",
   },
   {
-    title: "Obelisk",
-    category: "Architecture Portfolio",
-    description: "A brutalist digital environment for an award-winning architecture firm. Utilizes WebGL for spatial navigation and real-time lighting simulation.",
+    title: "CV Master Teknik Sinar Bintan",
+    category: "Company Profile / Frontend",
+    description: "Merancang website profil perusahaan responsif dengan optimasi loading time melalui manajemen aset visual dan penerapan SEO dasar.",
     image: "/images/project-2.png",
-    year: "2023",
+    year: "2026",
+  },
+  {
+    title: "KIP Scholarship Security Research",
+    category: "Research & Security / Fullstack",
+    description: "Mengembangkan sistem informasi beasiswa terenkripsi dengan algoritma Scrypt, HKDF, dan AES-256-GCM guna menjamin keamanan data sensitif mahasiswa.",
+    image: "/images/hero-bg.png",
+    year: "2025",
   }
 ];
 
 export default function WorkSection() {
+  const { data: dbProjects } = useGetProjects();
+  const displayProjects = Array.isArray(dbProjects) && dbProjects.length > 0 ? dbProjects : fallbackProjects;
+
   return (
     <section id="work" className="py-32 relative">
       <div className="container mx-auto px-6 md:px-12">
@@ -41,12 +52,12 @@ export default function WorkSection() {
             transition={{ duration: 1, delay: 0.5 }}
             className="hidden md:block text-muted-foreground text-sm tracking-[0.2em] uppercase"
           >
-            2021 — 2024
+            2021 — 2026
           </motion.div>
         </div>
 
         <div className="space-y-32">
-          {projects.map((project, idx) => (
+          {displayProjects.map((project, idx) => (
             <ProjectCard key={project.title} project={project} index={idx} />
           ))}
         </div>
@@ -110,13 +121,13 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
         </motion.p>
 
         <motion.button
-          className="flex items-center gap-2 border-b border-border pb-2 text-sm uppercase tracking-widest hover:text-primary hover:border-primary transition-all hover-target"
+          className="flex items-center gap-2 border-b border-border pb-2 text-sm uppercase tracking-widest hover:text-primary hover:border-primary transition-all hover-target group/btn"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
         >
-          View Case Study <ArrowUpRight size={16} />
+          <span>View Case Study</span> <ArrowUpRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
         </motion.button>
       </div>
     </div>

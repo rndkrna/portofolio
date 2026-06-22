@@ -1,6 +1,31 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
+interface ProfileData {
+  aboutParagraph1: string;
+  aboutParagraph2: string;
+  quote: string;
+}
+
+const fallbackProfile: ProfileData = {
+  aboutParagraph1: "Mahasiswa Teknik Informatika yang memadukan keahlian teknis pengembangan perangkat lunak dengan pengalaman kepemimpinan strategis yang solid. Berpengalaman memimpin tim penelitian dan divisi organisasi, serta sukses mengeksekusi proyek web komersial dari tahap negosiasi klien hingga deployment.",
+  aboutParagraph2: "Saat ini saya menempuh studi S1 Teknik Informatika di Universitas Maritim Raja Ali Haji (UMRAH) di Tanjung Pinang, Kepulauan Riau. Sebelumnya, saya menempuh pendidikan di SMA Negeri 1 Singkil Utara di jurusan Ilmu Pengetahuan Sosial (IPS). Latar belakang ini membentuk cara pandang saya yang holistik dalam merumuskan solusi teknologi.",
+  quote: "Memadukan keahlian teknis pengembangan perangkat lunak dengan pengalaman kepemimpinan strategis yang solid."
+};
+
 export default function AboutSection() {
+  const [profile, setProfile] = useState<ProfileData>(fallbackProfile);
+
+  useEffect(() => {
+    fetch("/api/profile")
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error();
+      })
+      .then(data => setProfile(data))
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="about" className="py-32 relative">
       <div className="container mx-auto px-6 md:px-12">
@@ -35,7 +60,7 @@ export default function AboutSection() {
               transition={{ duration: 0.8 }}
             >
               <p className="first-letter:text-7xl first-letter:font-display first-letter:text-primary first-letter:float-left first-letter:mr-4 first-letter:mt-2">
-                I believe that software should be felt as much as it is used. For the past decade, I have been exploring the intersection of design, engineering, and storytelling.
+                {profile.aboutParagraph1}
               </p>
             </motion.div>
 
@@ -46,7 +71,7 @@ export default function AboutSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <p>
-                My approach is rooted in subtraction. Strip away the decorative, the superfluous, the expected. What remains must be structurally sound and undeniably beautiful. Whether I am architecting a complex web application or directing a digital campaign, the goal is always the same: clarity and resonance.
+                {profile.aboutParagraph2}
               </p>
             </motion.div>
 
@@ -58,7 +83,7 @@ export default function AboutSection() {
               className="border-l border-primary/30 pl-8 italic my-12 py-2"
             >
               <p className="text-2xl text-foreground font-serif">
-                "We don't just build interfaces. We build environments for human attention."
+                "{profile.quote}"
               </p>
             </motion.div>
           </div>

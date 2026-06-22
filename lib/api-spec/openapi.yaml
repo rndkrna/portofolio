@@ -1,6 +1,5 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
   description: API specification
@@ -10,6 +9,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: contact
+    description: Contact operations
+  - name: projects
+    description: Projects operations
+  - name: experiences
+    description: Experiences operations
 paths:
   /healthz:
     get:
@@ -24,6 +29,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /contact:
+    post:
+      operationId: submitContactForm
+      tags: [contact]
+      summary: Submit contact form
+      description: Saves a contact message to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactSubmission"
+      responses:
+        "200":
+          description: Message saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactSuccessResponse"
+  /projects:
+    get:
+      operationId: getProjects
+      tags: [projects]
+      summary: Get all projects
+      description: Returns all projects in the portfolio
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: addProject
+      tags: [projects]
+      summary: Add a new project
+      description: Saves a new project to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectSubmission"
+      responses:
+        "200":
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /experiences:
+    get:
+      operationId: getExperiences
+      tags: [experiences]
+      summary: Get all experiences
+      description: Returns all experiences in the portfolio
+      responses:
+        "200":
+          description: List of experiences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Experience"
+    post:
+      operationId: addExperience
+      tags: [experiences]
+      summary: Add a new experience
+      description: Saves a new experience to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExperienceSubmission"
+      responses:
+        "200":
+          description: Experience created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Experience"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +123,115 @@ components:
           type: string
       required:
         - status
-
+    ContactSubmission:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        message:
+          type: string
+      required:
+        - name
+        - email
+        - message
+    ContactSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        year:
+          type: string
+        link:
+          type: string
+          nullable: true
+      required:
+        - id
+        - title
+        - category
+        - description
+        - image
+        - year
+    ProjectSubmission:
+      type: object
+      properties:
+        title:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        year:
+          type: string
+        link:
+          type: string
+          nullable: true
+      required:
+        - title
+        - category
+        - description
+        - image
+        - year
+    Experience:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+        company:
+          type: string
+        period:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - role
+        - company
+        - period
+        - description
+        - type
+    ExperienceSubmission:
+      type: object
+      properties:
+        role:
+          type: string
+        company:
+          type: string
+        period:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+      required:
+        - role
+        - company
+        - period
+        - description
+        - type

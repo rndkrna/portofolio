@@ -26,7 +26,7 @@ export default function Home() {
       
       <footer className="py-12 border-t border-border/50 text-center">
         <p className="text-muted-foreground text-sm uppercase tracking-widest font-sans">
-          © {new Date().getFullYear()} Elias Thorne. All rights reserved.
+          © {new Date().getFullYear()} Renda Kurnia Manik. All rights reserved.
         </p>
       </footer>
     </div>

@@ -1,27 +1,43 @@
 import { motion } from 'framer-motion';
+import { useGetExperiences } from '@workspace/api-client-react';
 
-const experiences = [
+const fallbackExperiences = [
   {
-    role: "Design Director",
-    company: "Studio Null",
-    period: "2021 — Present",
-    description: "Leading a boutique agency focused on immersive web experiences. Directing visual output and technical architecture for high-profile cultural clients."
+    role: "Freelance Web Developer",
+    company: "Detik1Aceh.com",
+    period: "Apr 2026 — Present",
+    description: "Membangun platform media berita digital secara end-to-end. Merancang skema basis data relasional serta mengamankan situs dari serangan brute force pada halaman login admin."
   },
   {
-    role: "Senior Creative Developer",
-    company: "Monolith Interactive",
-    period: "2018 — 2021",
-    description: "Architected real-time 3D web applications and interactive campaigns. Bridged the gap between the design department and engineering teams."
+    role: "Freelance Front-End Developer",
+    company: "CV Master Teknik Sinar Bintan",
+    period: "Mar 2026",
+    description: "Merancang website profil perusahaan responsif (Mobile & Desktop), melakukan manajemen aset visual untuk optimasi loading time, dan menerapkan SEO dasar."
   },
   {
-    role: "Digital Designer",
-    company: "Vanguard Media",
-    period: "2015 — 2018",
-    description: "Designed responsive digital products and brand identities. Established the agency's motion design guidelines."
+    role: "Ketua Divisi Kajian & Penelitian",
+    company: "BEM FTTK UMRAH",
+    period: "Des 2025 — Present",
+    description: "Memimpin tim dalam merancang metodologi penelitian dan analisis data untuk merumuskan rekomendasi kebijakan organisasi berbasis data."
+  },
+  {
+    role: "Tim Peneliti Keamanan Sistem",
+    company: "Universitas Maritim Raja Ali Haji",
+    period: "2025",
+    description: "Mengembangkan sistem beasiswa terenkripsi dengan kriptografi modern (Scrypt, HKDF, AES-256-GCM) serta melakukan pengujian skenario kerentanan siber."
+  },
+  {
+    role: "Ketua Bidang Kaderisasi & Advokasi",
+    company: "PMII",
+    period: "2023 — 2024",
+    description: "Merancang kurikulum kepemimpinan tingkat organisasi dan mengelola tim pendampingan advokasi anggota secara terstruktur."
   }
 ];
 
 export default function ExperienceSection() {
+  const { data: dbExperiences } = useGetExperiences();
+  const displayExperiences = Array.isArray(dbExperiences) && dbExperiences.length > 0 ? dbExperiences : fallbackExperiences;
+
   return (
     <section id="experience" className="py-32 bg-card/30 relative border-t border-border/40">
       <div className="container mx-auto px-6 md:px-12">
@@ -35,7 +51,7 @@ export default function ExperienceSection() {
         </motion.h2>
 
         <div className="max-w-4xl mx-auto">
-          {experiences.map((exp, idx) => (
+          {displayExperiences.map((exp, idx) => (
             <motion.div 
               key={idx}
               className="relative pl-8 md:pl-0 border-l border-border md:border-none mb-16 last:mb-0"
