@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { 
-  User, Folder, Calendar, Mail, LogOut, 
-  Plus, Trash, Upload, Check, AlertCircle, Eye, Edit
+import {
+  User,
+  Folder,
+  Calendar,
+  Mail,
+  LogOut,
+  Plus,
+  Trash,
+  Upload,
+  Check,
+  AlertCircle,
+  Eye,
+  Edit,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -46,10 +56,12 @@ interface MessageData {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("admin_token")
+    localStorage.getItem("admin_token"),
   );
   const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState<"profile" | "projects" | "experiences" | "messages">("profile");
+  const [activeTab, setActiveTab] = useState<
+    "profile" | "projects" | "experiences" | "messages"
+  >("profile");
 
   // State lists
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -62,8 +74,11 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
 
   // Editing states
-  const [editingProject, setEditingProject] = useState<ProjectData | null>(null);
-  const [editingExperience, setEditingExperience] = useState<ExperienceData | null>(null);
+  const [editingProject, setEditingProject] = useState<ProjectData | null>(
+    null,
+  );
+  const [editingExperience, setEditingExperience] =
+    useState<ExperienceData | null>(null);
 
   // Project form
   const [newProject, setNewProject] = useState({
@@ -72,7 +87,7 @@ export default function AdminDashboard() {
     description: "",
     image: "",
     year: new Date().getFullYear().toString(),
-    link: ""
+    link: "",
   });
 
   // Experience form
@@ -81,13 +96,13 @@ export default function AdminDashboard() {
     company: "",
     period: "",
     description: "",
-    type: "professional"
+    type: "professional",
   });
 
   // Fetch all dashboard data
   const fetchData = async () => {
     try {
-      const pRes = await fetch("/api/profile");
+      const pRes = await fetch("/api/profile", { cache: "no-store" });
       if (pRes.ok) setProfile(await pRes.json());
 
       const prRes = await fetch("/api/projects");
@@ -117,7 +132,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -142,26 +157,37 @@ export default function AdminDashboard() {
   };
 
   // File Upload Helper
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    callback: (url: string) => void,
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     const reader = new FileReader();
+    reader.onerror = () => {
+      setUploading(false);
+      toast.error("Gagal membaca file foto.");
+    };
     reader.readAsDataURL(file);
     reader.onload = async () => {
       try {
+        const dataUrl = reader.result as string;
+        callback(dataUrl);
+        setUploading(false);
+
         const res = await fetch("/api/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             filename: file.name,
-            base64: reader.result as string
-          })
+            base64: dataUrl,
+          }),
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          callback(data.url);
+          if (data.url !== dataUrl) callback(data.url);
           toast.success("File berhasil diunggah!");
         } else {
           toast.error("Gagal mengunggah file.");
@@ -178,15 +204,21 @@ export default function AdminDashboard() {
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile) return;
+    if (uploading) {
+      toast.error("Tunggu upload foto selesai sebelum menyimpan.");
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile)
+        body: JSON.stringify(profile),
       });
       if (res.ok) {
+        const data = await res.json();
+        if (data.profile) setProfile(data.profile);
         toast.success("Profil berhasil diperbarui!");
       } else {
         toast.error("Gagal menyimpan profil.");
@@ -209,7 +241,9 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const isEdit = editingProject !== null;
-      const url = isEdit ? `/api/projects/${editingProject.id}` : "/api/projects";
+      const url = isEdit
+        ? `/api/projects/${editingProject.id}`
+        : "/api/projects";
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -217,24 +251,30 @@ export default function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...newProject,
-          link: newProject.link || null
-        })
+          link: newProject.link || null,
+        }),
       });
 
       if (res.ok) {
-        toast.success(isEdit ? "Proyek berhasil diperbarui!" : "Proyek berhasil ditambahkan!");
+        toast.success(
+          isEdit
+            ? "Proyek berhasil diperbarui!"
+            : "Proyek berhasil ditambahkan!",
+        );
         setNewProject({
           title: "",
           category: "",
           description: "",
           image: "",
           year: new Date().getFullYear().toString(),
-          link: ""
+          link: "",
         });
         setEditingProject(null);
         fetchData();
       } else {
-        toast.error(isEdit ? "Gagal memperbarui proyek." : "Gagal menambahkan proyek.");
+        toast.error(
+          isEdit ? "Gagal memperbarui proyek." : "Gagal menambahkan proyek.",
+        );
       }
     } catch (err) {
       toast.error("Error server.");
@@ -251,7 +291,7 @@ export default function AdminDashboard() {
       description: project.description,
       image: project.image,
       year: project.year,
-      link: project.link || ""
+      link: project.link || "",
     });
   };
 
@@ -263,7 +303,7 @@ export default function AdminDashboard() {
       description: "",
       image: "",
       year: new Date().getFullYear().toString(),
-      link: ""
+      link: "",
     });
   };
 
@@ -287,7 +327,11 @@ export default function AdminDashboard() {
   // Save or Edit Experience
   const handleSaveExperience = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newExperience.role || !newExperience.company || !newExperience.period) {
+    if (
+      !newExperience.role ||
+      !newExperience.company ||
+      !newExperience.period
+    ) {
       toast.error("Harap isi Peran, Instansi, dan Periode.");
       return;
     }
@@ -295,28 +339,38 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const isEdit = editingExperience !== null;
-      const url = isEdit ? `/api/experiences/${editingExperience.id}` : "/api/experiences";
+      const url = isEdit
+        ? `/api/experiences/${editingExperience.id}`
+        : "/api/experiences";
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newExperience)
+        body: JSON.stringify(newExperience),
       });
 
       if (res.ok) {
-        toast.success(isEdit ? "Pengalaman berhasil diperbarui!" : "Pengalaman berhasil ditambahkan!");
+        toast.success(
+          isEdit
+            ? "Pengalaman berhasil diperbarui!"
+            : "Pengalaman berhasil ditambahkan!",
+        );
         setNewExperience({
           role: "",
           company: "",
           period: "",
           description: "",
-          type: "professional"
+          type: "professional",
         });
         setEditingExperience(null);
         fetchData();
       } else {
-        toast.error(isEdit ? "Gagal memperbarui pengalaman." : "Gagal menambahkan pengalaman.");
+        toast.error(
+          isEdit
+            ? "Gagal memperbarui pengalaman."
+            : "Gagal menambahkan pengalaman.",
+        );
       }
     } catch (err) {
       toast.error("Error server.");
@@ -332,7 +386,7 @@ export default function AdminDashboard() {
       company: exp.company,
       period: exp.period,
       description: exp.description,
-      type: exp.type
+      type: exp.type,
     });
   };
 
@@ -343,7 +397,7 @@ export default function AdminDashboard() {
       company: "",
       period: "",
       description: "",
-      type: "professional"
+      type: "professional",
     });
   };
 
@@ -386,16 +440,22 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-6 py-12 relative overflow-hidden select-none">
         <div className="absolute w-[400px] h-[400px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-        
+
         <div className="max-w-md w-full bg-card/30 backdrop-blur-md border border-border/60 p-8 rounded-lg shadow-2xl relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-display uppercase tracking-widest text-foreground">Admin Portal</h2>
-            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">Personal Control Panel</p>
+            <h2 className="text-3xl font-display uppercase tracking-widest text-foreground">
+              Admin Portal
+            </h2>
+            <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">
+              Personal Control Panel
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Password</label>
+              <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                Password
+              </label>
               <input
                 type="password"
                 required
@@ -413,9 +473,9 @@ export default function AdminDashboard() {
               {loading ? "Verifying..." : "Access Control"}
             </button>
           </form>
-          
+
           <div className="text-center mt-8">
-            <button 
+            <button
               onClick={() => setLocation("/")}
               className="text-xs text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
             >
@@ -435,8 +495,12 @@ export default function AdminDashboard() {
         <div>
           {/* Logo/Identity */}
           <div className="mb-10 text-center lg:text-left">
-            <h2 className="text-lg font-display uppercase tracking-widest font-bold">Renda K. M.</h2>
-            <p className="text-[10px] text-primary uppercase tracking-[0.25em]">Admin Dashboard</p>
+            <h2 className="text-lg font-display uppercase tracking-widest font-bold">
+              Renda K. M.
+            </h2>
+            <p className="text-[10px] text-primary uppercase tracking-[0.25em]">
+              Admin Dashboard
+            </p>
           </div>
 
           {/* Navigation Items */}
@@ -444,7 +508,9 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("profile")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors hover-target ${
-                activeTab === "profile" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
+                activeTab === "profile"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               }`}
             >
               <User size={16} /> Profile Settings
@@ -453,7 +519,9 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("projects")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors hover-target ${
-                activeTab === "projects" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
+                activeTab === "projects"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               }`}
             >
               <Folder size={16} /> Manage Projects
@@ -462,7 +530,9 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("experiences")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors hover-target ${
-                activeTab === "experiences" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
+                activeTab === "experiences"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               }`}
             >
               <Calendar size={16} /> Chronology
@@ -471,7 +541,9 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("messages")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors hover-target relative ${
-                activeTab === "messages" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
+                activeTab === "messages"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-card/45 hover:text-foreground"
               }`}
             >
               <Mail size={16} /> Inbox
@@ -503,43 +575,62 @@ export default function AdminDashboard() {
 
       {/* Main Content Area */}
       <main className="flex-grow p-8 lg:p-12 overflow-y-auto max-w-5xl">
-        
         {/* Profile Settings Tab */}
         {activeTab === "profile" && profile && (
           <div className="space-y-8">
             <div>
-              <h2 className="text-3xl font-display uppercase tracking-widest">Profile Configuration</h2>
-              <p className="text-sm text-muted-foreground">Perbarui informasi utama biodata Anda yang tampil di halaman depan.</p>
+              <h2 className="text-3xl font-display uppercase tracking-widest">
+                Profile Configuration
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Perbarui informasi utama biodata Anda yang tampil di halaman
+                depan.
+              </p>
             </div>
 
-            <form onSubmit={handleSaveProfile} className="space-y-6 bg-card/20 border border-border/40 p-8 rounded-md">
+            <form
+              onSubmit={handleSaveProfile}
+              className="space-y-6 bg-card/20 border border-border/40 p-8 rounded-md"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Nama Lengkap</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Nama Lengkap
+                  </label>
                   <input
                     type="text"
                     value={profile.name}
-                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, name: e.target.value })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Peran / Tagline Utama</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Peran / Tagline Utama
+                  </label>
                   <input
                     type="text"
                     value={profile.role}
-                    onChange={(e) => setProfile({ ...profile, role: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, role: e.target.value })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Mini Bio (Hero)</label>
+                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Mini Bio (Hero)
+                </label>
                 <textarea
                   value={profile.bio}
                   rows={2}
-                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, bio: e.target.value })
+                  }
                   className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm resize-none font-light leading-relaxed"
                 />
               </div>
@@ -547,12 +638,22 @@ export default function AdminDashboard() {
               {/* Avatar Upload */}
               <div className="border border-border/30 bg-background/10 p-6 rounded-sm flex flex-col sm:flex-row items-center gap-6">
                 <div className="w-24 h-24 rounded-full overflow-hidden border border-border/80 bg-card">
-                  <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  <img
+                    key={profile.avatar}
+                    src={profile.avatar}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-grow">
-                  <h4 className="text-sm font-semibold uppercase tracking-wider mb-1">Foto Profil</h4>
-                  <p className="text-xs text-muted-foreground mb-4">Unggah file foto baru Anda (.png, .jpg) untuk ganti di splash & homepage.</p>
-                  
+                  <h4 className="text-sm font-semibold uppercase tracking-wider mb-1">
+                    Foto Profil
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Unggah file foto baru Anda (.png, .jpg) untuk ganti di
+                    splash & homepage.
+                  </p>
+
                   <div className="flex items-center gap-3">
                     <label className="bg-secondary hover:bg-secondary/80 text-foreground px-4 py-2 rounded-sm text-xs font-sans uppercase tracking-widest cursor-pointer flex items-center gap-2 hover-target">
                       <Upload size={14} />
@@ -560,44 +661,72 @@ export default function AdminDashboard() {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleFileUpload(e, (url) => setProfile({ ...profile, avatar: url }))}
+                        onChange={(e) =>
+                          handleFileUpload(e, (url) =>
+                            setProfile((current) =>
+                              current ? { ...current, avatar: url } : current,
+                            ),
+                          )
+                        }
                         className="hidden"
                       />
                     </label>
-                    <span className="text-xs text-muted-foreground font-mono">{profile.avatar}</span>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {profile.avatar}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6 pt-4 border-t border-border/40">
-                <h3 className="text-lg font-display uppercase tracking-widest text-primary">Tentang Saya (Narrative)</h3>
-                
+                <h3 className="text-lg font-display uppercase tracking-widest text-primary">
+                  Tentang Saya (Narrative)
+                </h3>
+
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Paragraf 1</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Paragraf 1
+                  </label>
                   <textarea
                     value={profile.aboutParagraph1}
                     rows={4}
-                    onChange={(e) => setProfile({ ...profile, aboutParagraph1: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        aboutParagraph1: e.target.value,
+                      })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm font-light leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Paragraf 2</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Paragraf 2
+                  </label>
                   <textarea
                     value={profile.aboutParagraph2}
                     rows={4}
-                    onChange={(e) => setProfile({ ...profile, aboutParagraph2: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        aboutParagraph2: e.target.value,
+                      })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm font-light leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Quote (Kutipan Utama)</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Quote (Kutipan Utama)
+                  </label>
                   <input
                     type="text"
                     value={profile.quote}
-                    onChange={(e) => setProfile({ ...profile, quote: e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, quote: e.target.value })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm font-light"
                   />
                 </div>
@@ -605,10 +734,14 @@ export default function AdminDashboard() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || uploading}
                 className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
               >
-                {loading ? "Menyimpan..." : "Simpan Perubahan"}
+                {uploading
+                  ? "Mengunggah Foto..."
+                  : loading
+                    ? "Menyimpan..."
+                    : "Simpan Perubahan"}
               </button>
             </form>
           </div>
@@ -618,35 +751,50 @@ export default function AdminDashboard() {
         {activeTab === "projects" && (
           <div className="space-y-12">
             <div>
-              <h2 className="text-3xl font-display uppercase tracking-widest">Manage Projects</h2>
-              <p className="text-sm text-muted-foreground">Tambah dan hapus proyek yang tampil di bagian "Selected Works".</p>
+              <h2 className="text-3xl font-display uppercase tracking-widest">
+                Manage Projects
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Tambah dan hapus proyek yang tampil di bagian "Selected Works".
+              </p>
             </div>
 
             {/* Add New Project Form */}
-            <form onSubmit={handleSaveProject} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
+            <form
+              onSubmit={handleSaveProject}
+              className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6"
+            >
               <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">
                 {editingProject ? "Edit Proyek" : "Tambah Proyek Baru"}
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Judul Proyek</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Judul Proyek
+                  </label>
                   <input
                     type="text"
                     required
                     value={newProject.title}
-                    onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, title: e.target.value })
+                    }
                     placeholder="Contoh: Detik1Aceh"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Kategori / Metode</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Kategori / Metode
+                  </label>
                   <input
                     type="text"
                     required
                     value={newProject.category}
-                    onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, category: e.target.value })
+                    }
                     placeholder="Contoh: Media News Platform / Fullstack"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
@@ -655,21 +803,29 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Tahun</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Tahun
+                  </label>
                   <input
                     type="text"
                     required
                     value={newProject.year}
-                    onChange={(e) => setNewProject({ ...newProject, year: e.target.value })}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, year: e.target.value })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Link Proyek (Opsional)</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Link Proyek (Opsional)
+                  </label>
                   <input
                     type="url"
                     value={newProject.link}
-                    onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
+                    onChange={(e) =>
+                      setNewProject({ ...newProject, link: e.target.value })
+                    }
                     placeholder="https://example.com"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
@@ -678,11 +834,17 @@ export default function AdminDashboard() {
 
               {/* Image Upload for Project */}
               <div>
-                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Gambar Proyek</label>
+                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Gambar Proyek
+                </label>
                 <div className="border border-border/30 bg-background/10 p-5 rounded-sm flex flex-col sm:flex-row items-center gap-6">
                   {newProject.image && (
                     <div className="w-24 h-18 overflow-hidden rounded border border-border bg-card">
-                      <img src={newProject.image} alt="Preview" className="w-full h-full object-cover" />
+                      <img
+                        src={newProject.image}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
                   <div className="flex-grow">
@@ -693,23 +855,36 @@ export default function AdminDashboard() {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleFileUpload(e, (url) => setNewProject({ ...newProject, image: url }))}
+                          onChange={(e) =>
+                            handleFileUpload(e, (url) =>
+                              setNewProject({ ...newProject, image: url }),
+                            )
+                          }
                           className="hidden"
                         />
                       </label>
-                      <span className="text-xs text-muted-foreground font-mono">{newProject.image || "Belum ada gambar"}</span>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {newProject.image || "Belum ada gambar"}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Deskripsi Proyek</label>
+                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Deskripsi Proyek
+                </label>
                 <textarea
                   value={newProject.description}
                   rows={3}
                   required
-                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Ceritakan kontribusi dan teknologi yang digunakan..."
                   className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm font-light resize-none"
                 />
@@ -721,7 +896,11 @@ export default function AdminDashboard() {
                   disabled={loading}
                   className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
                 >
-                  {loading ? "Menyimpan..." : (editingProject ? "Simpan Perubahan" : "Tambah Proyek")}
+                  {loading
+                    ? "Menyimpan..."
+                    : editingProject
+                      ? "Simpan Perubahan"
+                      : "Tambah Proyek"}
                 </button>
                 {editingProject && (
                   <button
@@ -737,7 +916,9 @@ export default function AdminDashboard() {
 
             {/* List of existing projects */}
             <div className="space-y-4">
-              <h3 className="text-lg font-display uppercase tracking-widest text-foreground">Daftar Proyek Aktif</h3>
+              <h3 className="text-lg font-display uppercase tracking-widest text-foreground">
+                Daftar Proyek Aktif
+              </h3>
               <div className="border border-border/40 rounded-md overflow-hidden bg-card/10">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -751,13 +932,26 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-border/30 text-sm">
                     {projects.map((proj) => (
-                      <tr key={proj.id} className="hover:bg-card/20 transition-colors">
+                      <tr
+                        key={proj.id}
+                        className="hover:bg-card/20 transition-colors"
+                      >
                         <td className="p-4">
-                          <img src={proj.image} alt={proj.title} className="w-12 h-9 object-cover rounded border" />
+                          <img
+                            src={proj.image}
+                            alt={proj.title}
+                            className="w-12 h-9 object-cover rounded border"
+                          />
                         </td>
-                        <td className="p-4 font-semibold text-foreground">{proj.title}</td>
-                        <td className="p-4 text-muted-foreground">{proj.category}</td>
-                        <td className="p-4 text-muted-foreground font-mono">{proj.year}</td>
+                        <td className="p-4 font-semibold text-foreground">
+                          {proj.title}
+                        </td>
+                        <td className="p-4 text-muted-foreground">
+                          {proj.category}
+                        </td>
+                        <td className="p-4 text-muted-foreground font-mono">
+                          {proj.year}
+                        </td>
                         <td className="p-4 text-right flex justify-end gap-2">
                           <button
                             onClick={() => startEditProject(proj)}
@@ -779,7 +973,10 @@ export default function AdminDashboard() {
                     ))}
                     {projects.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                        <td
+                          colSpan={5}
+                          className="p-8 text-center text-muted-foreground"
+                        >
                           Belum ada proyek di database.
                         </td>
                       </tr>
@@ -795,35 +992,56 @@ export default function AdminDashboard() {
         {activeTab === "experiences" && (
           <div className="space-y-12">
             <div>
-              <h2 className="text-3xl font-display uppercase tracking-widest">Manage Chronology</h2>
-              <p className="text-sm text-muted-foreground">Kelola linimasa karir dan kepemimpinan Anda.</p>
+              <h2 className="text-3xl font-display uppercase tracking-widest">
+                Manage Chronology
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Kelola linimasa karir dan kepemimpinan Anda.
+              </p>
             </div>
 
             {/* Add New Experience Form */}
-            <form onSubmit={handleSaveExperience} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
+            <form
+              onSubmit={handleSaveExperience}
+              className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6"
+            >
               <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">
                 {editingExperience ? "Edit Linimasa" : "Tambah Milestones Baru"}
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Jabatan / Peran</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Jabatan / Peran
+                  </label>
                   <input
                     type="text"
                     required
                     value={newExperience.role}
-                    onChange={(e) => setNewExperience({ ...newExperience, role: e.target.value })}
+                    onChange={(e) =>
+                      setNewExperience({
+                        ...newExperience,
+                        role: e.target.value,
+                      })
+                    }
                     placeholder="Contoh: Freelance Web Developer"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Nama Instansi / Organisasi</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Nama Instansi / Organisasi
+                  </label>
                   <input
                     type="text"
                     required
                     value={newExperience.company}
-                    onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
+                    onChange={(e) =>
+                      setNewExperience({
+                        ...newExperience,
+                        company: e.target.value,
+                      })
+                    }
                     placeholder="Contoh: PMII / BEM FTTK"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
@@ -832,36 +1050,61 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Periode</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Periode
+                  </label>
                   <input
                     type="text"
                     required
                     value={newExperience.period}
-                    onChange={(e) => setNewExperience({ ...newExperience, period: e.target.value })}
+                    onChange={(e) =>
+                      setNewExperience({
+                        ...newExperience,
+                        period: e.target.value,
+                      })
+                    }
                     placeholder="Contoh: Apr 2026 — Present"
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Tipe Milestones</label>
+                  <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                    Tipe Milestones
+                  </label>
                   <select
                     value={newExperience.type}
-                    onChange={(e) => setNewExperience({ ...newExperience, type: e.target.value })}
+                    onChange={(e) =>
+                      setNewExperience({
+                        ...newExperience,
+                        type: e.target.value,
+                      })
+                    }
                     className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm h-[46px]"
                   >
-                    <option value="professional">Professional / Technical</option>
-                    <option value="leadership">Leadership & Organizational</option>
+                    <option value="professional">
+                      Professional / Technical
+                    </option>
+                    <option value="leadership">
+                      Leadership & Organizational
+                    </option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">Deskripsi Tanggung Jawab</label>
+                <label className="block text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Deskripsi Tanggung Jawab
+                </label>
                 <textarea
                   value={newExperience.description}
                   rows={3}
                   required
-                  onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewExperience({
+                      ...newExperience,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Rincikan kontribusi atau metodologi kepemimpinan Anda..."
                   className="w-full bg-background/40 border border-border/80 focus:border-primary/50 focus:outline-none px-4 py-3 text-foreground rounded-sm font-light resize-none"
                 />
@@ -873,7 +1116,11 @@ export default function AdminDashboard() {
                   disabled={loading}
                   className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
                 >
-                  {loading ? "Menyimpan..." : (editingExperience ? "Simpan Perubahan" : "Tambah Linimasa")}
+                  {loading
+                    ? "Menyimpan..."
+                    : editingExperience
+                      ? "Simpan Perubahan"
+                      : "Tambah Linimasa"}
                 </button>
                 {editingExperience && (
                   <button
@@ -889,7 +1136,9 @@ export default function AdminDashboard() {
 
             {/* List of existing experiences */}
             <div className="space-y-4">
-              <h3 className="text-lg font-display uppercase tracking-widest text-foreground">Daftar Linimasa Aktif</h3>
+              <h3 className="text-lg font-display uppercase tracking-widest text-foreground">
+                Daftar Linimasa Aktif
+              </h3>
               <div className="border border-border/40 rounded-md overflow-hidden bg-card/10">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -903,14 +1152,27 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-border/30 text-sm">
                     {experiences.map((exp) => (
-                      <tr key={exp.id} className="hover:bg-card/20 transition-colors">
-                        <td className="p-4 font-semibold text-foreground">{exp.role}</td>
-                        <td className="p-4 text-muted-foreground">{exp.company}</td>
-                        <td className="p-4 text-muted-foreground font-mono">{exp.period}</td>
+                      <tr
+                        key={exp.id}
+                        className="hover:bg-card/20 transition-colors"
+                      >
+                        <td className="p-4 font-semibold text-foreground">
+                          {exp.role}
+                        </td>
+                        <td className="p-4 text-muted-foreground">
+                          {exp.company}
+                        </td>
+                        <td className="p-4 text-muted-foreground font-mono">
+                          {exp.period}
+                        </td>
                         <td className="p-4">
-                          <span className={`px-2 py-0.5 text-[10px] rounded-full uppercase tracking-wider ${
-                            exp.type === "professional" ? "bg-primary/10 text-primary border border-primary/20" : "bg-accent/10 text-accent-foreground border border-accent/20"
-                          }`}>
+                          <span
+                            className={`px-2 py-0.5 text-[10px] rounded-full uppercase tracking-wider ${
+                              exp.type === "professional"
+                                ? "bg-primary/10 text-primary border border-primary/20"
+                                : "bg-accent/10 text-accent-foreground border border-accent/20"
+                            }`}
+                          >
                             {exp.type}
                           </span>
                         </td>
@@ -935,7 +1197,10 @@ export default function AdminDashboard() {
                     ))}
                     {experiences.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                        <td
+                          colSpan={5}
+                          className="p-8 text-center text-muted-foreground"
+                        >
                           Belum ada linimasa di database.
                         </td>
                       </tr>
@@ -951,13 +1216,20 @@ export default function AdminDashboard() {
         {activeTab === "messages" && (
           <div className="space-y-8">
             <div>
-              <h2 className="text-3xl font-display uppercase tracking-widest font-semibold">Inbox Submission</h2>
-              <p className="text-sm text-muted-foreground">Lihat pesan kontak masuk dari pengunjung portofolio Anda.</p>
+              <h2 className="text-3xl font-display uppercase tracking-widest font-semibold">
+                Inbox Submission
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Lihat pesan kontak masuk dari pengunjung portofolio Anda.
+              </p>
             </div>
 
             <div className="space-y-6">
               {messages.map((msg) => (
-                <div key={msg.id} className="bg-card/25 backdrop-blur-sm border border-border/40 p-6 rounded-md shadow flex flex-col gap-4 relative group">
+                <div
+                  key={msg.id}
+                  className="bg-card/25 backdrop-blur-sm border border-border/40 p-6 rounded-md shadow flex flex-col gap-4 relative group"
+                >
                   <button
                     onClick={() => handleDeleteMessage(msg.id)}
                     className="absolute right-4 top-4 text-muted-foreground hover:text-destructive p-2 rounded transition-all cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100 hover-target"
@@ -971,7 +1243,12 @@ export default function AdminDashboard() {
                       <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
                         {msg.name}
                       </h4>
-                      <a href={`mailto:${msg.email}`} className="text-xs text-primary hover:underline">{msg.email}</a>
+                      <a
+                        href={`mailto:${msg.email}`}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        {msg.email}
+                      </a>
                     </div>
                     <span className="text-xs text-muted-foreground font-mono">
                       {new Date(msg.createdAt).toLocaleString("id-ID")}
@@ -986,14 +1263,18 @@ export default function AdminDashboard() {
 
               {messages.length === 0 && (
                 <div className="border border-border/40 p-12 rounded-md text-center bg-card/5">
-                  <Mail size={32} className="text-muted-foreground mx-auto mb-4 opacity-40" />
-                  <p className="text-muted-foreground font-light">Kotak masuk kosong. Belum ada pesan dari pengunjung.</p>
+                  <Mail
+                    size={32}
+                    className="text-muted-foreground mx-auto mb-4 opacity-40"
+                  />
+                  <p className="text-muted-foreground font-light">
+                    Kotak masuk kosong. Belum ada pesan dari pengunjung.
+                  </p>
                 </div>
               )}
             </div>
           </div>
         )}
-
       </main>
     </div>
   );
