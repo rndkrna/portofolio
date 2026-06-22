@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "main": "dist/index.mjs",
+  "packageManager": "pnpm@11.8.0",
   "scripts": {
     "dev": "cross-env NODE_ENV=development pnpm run build && pnpm run start",
     "build": "tsc -b && node ./build.mjs",
