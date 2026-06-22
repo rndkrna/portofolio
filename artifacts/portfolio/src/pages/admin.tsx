@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { 
   User, Folder, Calendar, Mail, LogOut, 
-  Plus, Trash, Upload, Check, AlertCircle, Eye
+  Plus, Trash, Upload, Check, AlertCircle, Eye, Edit
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -60,6 +60,10 @@ export default function AdminDashboard() {
   // Form states
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Editing states
+  const [editingProject, setEditingProject] = useState<ProjectData | null>(null);
+  const [editingExperience, setEditingExperience] = useState<ExperienceData | null>(null);
 
   // Project form
   const [newProject, setNewProject] = useState({
@@ -194,8 +198,8 @@ export default function AdminDashboard() {
     }
   };
 
-  // Add Project
-  const handleAddProject = async (e: React.FormEvent) => {
+  // Save or Edit Project
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.title || !newProject.category || !newProject.image) {
       toast.error("Harap isi Judul, Kategori, dan Gambar.");
@@ -204,16 +208,21 @@ export default function AdminDashboard() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/projects", {
-        method: "POST",
+      const isEdit = editingProject !== null;
+      const url = isEdit ? `/api/projects/${editingProject.id}` : "/api/projects";
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...newProject,
           link: newProject.link || null
         })
       });
+
       if (res.ok) {
-        toast.success("Proyek berhasil ditambahkan!");
+        toast.success(isEdit ? "Proyek berhasil diperbarui!" : "Proyek berhasil ditambahkan!");
         setNewProject({
           title: "",
           category: "",
@@ -222,15 +231,40 @@ export default function AdminDashboard() {
           year: new Date().getFullYear().toString(),
           link: ""
         });
+        setEditingProject(null);
         fetchData();
       } else {
-        toast.error("Gagal menambahkan proyek.");
+        toast.error(isEdit ? "Gagal memperbarui proyek." : "Gagal menambahkan proyek.");
       }
     } catch (err) {
       toast.error("Error server.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const startEditProject = (project: ProjectData) => {
+    setEditingProject(project);
+    setNewProject({
+      title: project.title,
+      category: project.category,
+      description: project.description,
+      image: project.image,
+      year: project.year,
+      link: project.link || ""
+    });
+  };
+
+  const cancelEditProject = () => {
+    setEditingProject(null);
+    setNewProject({
+      title: "",
+      category: "",
+      description: "",
+      image: "",
+      year: new Date().getFullYear().toString(),
+      link: ""
+    });
   };
 
   // Delete Project
@@ -250,8 +284,8 @@ export default function AdminDashboard() {
     }
   };
 
-  // Add Experience
-  const handleAddExperience = async (e: React.FormEvent) => {
+  // Save or Edit Experience
+  const handleSaveExperience = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newExperience.role || !newExperience.company || !newExperience.period) {
       toast.error("Harap isi Peran, Instansi, dan Periode.");
@@ -260,13 +294,18 @@ export default function AdminDashboard() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/experiences", {
-        method: "POST",
+      const isEdit = editingExperience !== null;
+      const url = isEdit ? `/api/experiences/${editingExperience.id}` : "/api/experiences";
+      const method = isEdit ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newExperience)
       });
+
       if (res.ok) {
-        toast.success("Pengalaman berhasil ditambahkan!");
+        toast.success(isEdit ? "Pengalaman berhasil diperbarui!" : "Pengalaman berhasil ditambahkan!");
         setNewExperience({
           role: "",
           company: "",
@@ -274,15 +313,38 @@ export default function AdminDashboard() {
           description: "",
           type: "professional"
         });
+        setEditingExperience(null);
         fetchData();
       } else {
-        toast.error("Gagal menambahkan pengalaman.");
+        toast.error(isEdit ? "Gagal memperbarui pengalaman." : "Gagal menambahkan pengalaman.");
       }
     } catch (err) {
       toast.error("Error server.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const startEditExperience = (exp: ExperienceData) => {
+    setEditingExperience(exp);
+    setNewExperience({
+      role: exp.role,
+      company: exp.company,
+      period: exp.period,
+      description: exp.description,
+      type: exp.type
+    });
+  };
+
+  const cancelEditExperience = () => {
+    setEditingExperience(null);
+    setNewExperience({
+      role: "",
+      company: "",
+      period: "",
+      description: "",
+      type: "professional"
+    });
   };
 
   // Delete Experience
@@ -561,8 +623,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Add New Project Form */}
-            <form onSubmit={handleAddProject} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
-              <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">Tambah Proyek Baru</h3>
+            <form onSubmit={handleSaveProject} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
+              <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">
+                {editingProject ? "Edit Proyek" : "Tambah Proyek Baru"}
+              </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -651,13 +715,24 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
-              >
-                {loading ? "Menambahkan..." : "Tambah Proyek"}
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
+                >
+                  {loading ? "Menyimpan..." : (editingProject ? "Simpan Perubahan" : "Tambah Proyek")}
+                </button>
+                {editingProject && (
+                  <button
+                    type="button"
+                    onClick={cancelEditProject}
+                    className="bg-secondary hover:bg-secondary/80 text-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
+                  >
+                    Batal
+                  </button>
+                )}
+              </div>
             </form>
 
             {/* List of existing projects */}
@@ -683,7 +758,15 @@ export default function AdminDashboard() {
                         <td className="p-4 font-semibold text-foreground">{proj.title}</td>
                         <td className="p-4 text-muted-foreground">{proj.category}</td>
                         <td className="p-4 text-muted-foreground font-mono">{proj.year}</td>
-                        <td className="p-4 text-right">
+                        <td className="p-4 text-right flex justify-end gap-2">
+                          <button
+                            onClick={() => startEditProject(proj)}
+                            className="text-primary hover:bg-primary/10 p-2 rounded transition-all cursor-pointer hover-target"
+                            title="Edit Proyek"
+                            type="button"
+                          >
+                            <Edit size={16} />
+                          </button>
                           <button
                             onClick={() => handleDeleteProject(proj.id)}
                             className="text-destructive hover:bg-destructive/10 p-2 rounded transition-all cursor-pointer hover-target"
@@ -717,8 +800,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Add New Experience Form */}
-            <form onSubmit={handleAddExperience} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
-              <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">Tambah Milestones Baru</h3>
+            <form onSubmit={handleSaveExperience} className="bg-card/20 border border-border/40 p-8 rounded-md space-y-6">
+              <h3 className="text-lg font-display uppercase tracking-widest text-primary mb-2">
+                {editingExperience ? "Edit Linimasa" : "Tambah Milestones Baru"}
+              </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -782,13 +867,24 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
-              >
-                {loading ? "Menambahkan..." : "Tambah Linimasa"}
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-primary hover:bg-primary/95 text-primary-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
+                >
+                  {loading ? "Menyimpan..." : (editingExperience ? "Simpan Perubahan" : "Tambah Linimasa")}
+                </button>
+                {editingExperience && (
+                  <button
+                    type="button"
+                    onClick={cancelEditExperience}
+                    className="bg-secondary hover:bg-secondary/80 text-foreground px-8 py-3 rounded-sm text-xs font-sans uppercase tracking-[0.2em] font-semibold cursor-pointer hover-target"
+                  >
+                    Batal
+                  </button>
+                )}
+              </div>
             </form>
 
             {/* List of existing experiences */}
@@ -818,7 +914,15 @@ export default function AdminDashboard() {
                             {exp.type}
                           </span>
                         </td>
-                        <td className="p-4 text-right">
+                        <td className="p-4 text-right flex justify-end gap-2">
+                          <button
+                            onClick={() => startEditExperience(exp)}
+                            className="text-primary hover:bg-primary/10 p-2 rounded transition-all cursor-pointer hover-target"
+                            title="Edit Linimasa"
+                            type="button"
+                          >
+                            <Edit size={16} />
+                          </button>
                           <button
                             onClick={() => handleDeleteExperience(exp.id)}
                             className="text-destructive hover:bg-destructive/10 p-2 rounded transition-all cursor-pointer hover-target"

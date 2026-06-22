@@ -49,4 +49,37 @@ router.delete("/projects/:id", async (req, res, next) => {
   }
 });
 
+router.put("/projects/:id", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID parameter" });
+      return;
+    }
+
+    const validated = AddProjectBody.parse(req.body);
+
+    const [updated] = await db.update(projectsTable)
+      .set({
+        title: validated.title,
+        category: validated.category,
+        description: validated.description,
+        image: validated.image,
+        year: validated.year,
+        link: validated.link ?? null,
+      })
+      .where(eq(projectsTable.id, id))
+      .returning();
+
+    if (!updated) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    res.json(GetProjectsResponseItem.parse(updated));
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

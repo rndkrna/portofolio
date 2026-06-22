@@ -48,4 +48,36 @@ router.delete("/experiences/:id", async (req, res, next) => {
   }
 });
 
+router.put("/experiences/:id", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ error: "Invalid ID parameter" });
+      return;
+    }
+
+    const validated = AddExperienceBody.parse(req.body);
+
+    const [updated] = await db.update(experiencesTable)
+      .set({
+        role: validated.role,
+        company: validated.company,
+        period: validated.period,
+        description: validated.description,
+        type: validated.type,
+      })
+      .where(eq(experiencesTable.id, id))
+      .returning();
+
+    if (!updated) {
+      res.status(404).json({ error: "Experience not found" });
+      return;
+    }
+
+    res.json(GetExperiencesResponseItem.parse(updated));
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

@@ -120,15 +120,30 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
           {project.description}
         </motion.p>
 
-        <motion.button
-          className="flex items-center gap-2 border-b border-border pb-2 text-sm uppercase tracking-widest hover:text-primary hover:border-primary transition-all hover-target group/btn"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-        >
-          <span>View Case Study</span> <ArrowUpRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-        </motion.button>
+        {project.link ? (
+          <motion.a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 border-b border-border pb-2 text-sm uppercase tracking-widest hover:text-primary hover:border-primary transition-all hover-target group/btn"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <span>View Case Study</span> <ArrowUpRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+          </motion.a>
+        ) : (
+          <motion.span
+            className="flex items-center gap-2 border-b border-border/20 pb-2 text-sm uppercase tracking-widest text-muted-foreground/40 select-none"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <span>View Case Study</span> <ArrowUpRight size={16} className="opacity-40" />
+          </motion.span>
+        )}
       </div>
     </div>
   );
