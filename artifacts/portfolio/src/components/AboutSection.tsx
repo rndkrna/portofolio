@@ -21,104 +21,123 @@ export default function AboutSection() {
 
   useEffect(() => {
     fetch("/api/profile", { cache: "no-store" })
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error();
-      })
-      .then((data) => setProfile(data))
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => setProfile(d))
       .catch(() => {});
   }, []);
 
   return (
     <section id="about" className="relative overflow-hidden">
 
-      {/* === TOP COLOR BLOCK — Section label === */}
-      <div className="relative py-20 border-b-4 border-[hsl(271,91%,65%)]" style={{
-        background: 'linear-gradient(135deg, hsl(271 91% 15%) 0%, hsl(290 60% 10%) 100%)',
-      }}>
-        <div className="dot-pattern absolute inset-0 opacity-40" />
+      {/* ── Header block ───────────────────────────────────── */}
+      <div
+        className="relative py-20 overflow-hidden border-b-4"
+        style={{ borderColor: "#a855f7", background: "linear-gradient(135deg, hsl(262 40% 12%) 0%, hsl(230 18% 8%) 100%)" }}
+      >
+        <div className="dot-pattern absolute inset-0 opacity-50" />
+
+        {/* Top-right accent */}
+        <div
+          className="absolute top-0 right-0 w-32 h-32 pointer-events-none"
+          style={{ background: "linear-gradient(225deg, rgba(168,85,247,0.25) 0%, transparent 70%)" }}
+        />
+
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            {/* Giant section number */}
-            <div className="flex items-start gap-6">
+
+            {/* Left: giant number + title */}
+            <div className="flex items-start gap-5">
               <span
-                className="font-display text-[8rem] md:text-[12rem] leading-none"
+                className="font-display leading-none"
                 style={{
-                  WebkitTextStroke: '2px hsl(271 91% 65% / 0.3)',
-                  color: 'transparent',
+                  fontSize: "clamp(7rem, 18vw, 14rem)",
+                  WebkitTextStroke: "2px rgba(168,85,247,0.28)",
+                  color: "transparent",
                 }}
               >
                 01
               </span>
               <div className="pt-4 md:pt-8">
-                <p className="font-mono text-xs tracking-[0.3em] uppercase text-[hsl(271,91%,75%)] mb-2">
+                <p className="font-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: "#a855f7" }}>
                   Chapter One
                 </p>
-                <h2 className="font-display uppercase text-6xl md:text-8xl text-foreground leading-none">
-                  The<br />
-                  <span className="text-gradient-violet">Narrative</span>
+                <h2
+                  className="font-display uppercase leading-none"
+                  style={{ fontSize: "clamp(3.5rem, 8vw, 7.5rem)" }}
+                >
+                  <span className="block text-white">The</span>
+                  <span
+                    className="block"
+                    style={{
+                      background: "linear-gradient(90deg, #a855f7, #f43f8a)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                    }}
+                  >
+                    Narrative
+                  </span>
                 </h2>
               </div>
             </div>
 
-            {/* Decorative right element */}
+            {/* Right: colored squares */}
             <motion.div
               className="hidden md:flex flex-col items-end gap-2"
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.7 }}
             >
               <div className="flex gap-2">
-                <div className="w-4 h-4 bg-[hsl(271,91%,65%)]" />
-                <div className="w-4 h-4 bg-[hsl(327,81%,62%)]" />
-                <div className="w-4 h-4 bg-[hsl(43,96%,56%)]" />
+                <div className="w-5 h-5" style={{ background: "#a855f7" }} />
+                <div className="w-5 h-5" style={{ background: "#f43f8a" }} />
+                <div className="w-5 h-5" style={{ background: "#f0a500" }} />
+                <div className="w-5 h-5 border-2" style={{ borderColor: "#a855f7" }} />
               </div>
-              <p className="font-mono text-xs text-foreground/40 tracking-widest">UMRAH · 2022 — Now</p>
+              <p className="font-mono text-xs" style={{ color: "hsl(220 15% 35%)" }}>UMRAH · 2022 — Now</p>
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* === MAIN CONTENT === */}
-      <div className="py-24 relative" style={{
-        background: 'hsl(270 50% 4%)',
-      }}>
+      {/* ── Body ───────────────────────────────────────────── */}
+      <div className="py-24 relative" style={{ background: "hsl(230 18% 8%)" }}>
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
 
-            {/* Left: text content */}
+            {/* Text */}
             <div className="lg:col-span-7 space-y-8">
-              <motion.div
+              <motion.p
+                className="font-sans text-lg md:text-xl font-light leading-relaxed"
+                style={{ color: "hsl(220 15% 65%)" }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8 }}
               >
-                <p className="font-sans text-lg md:text-xl text-foreground/70 font-light leading-relaxed">
-                  <span
-                    className="font-display text-6xl float-left mr-3 mt-1 leading-none"
-                    style={{ color: 'hsl(271,91%,65%)' }}
-                  >
-                    {profile.aboutParagraph1[0]}
-                  </span>
-                  {profile.aboutParagraph1.slice(1)}
-                </p>
-              </motion.div>
+                <span
+                  className="font-display text-7xl float-left mr-3 mt-0 leading-none"
+                  style={{ color: "#a855f7" }}
+                >
+                  {profile.aboutParagraph1[0]}
+                </span>
+                {profile.aboutParagraph1.slice(1)}
+              </motion.p>
 
-              <motion.div
+              <motion.p
+                className="font-sans text-lg md:text-xl font-light leading-relaxed"
+                style={{ color: "hsl(220 15% 65%)" }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, delay: 0.15 }}
               >
-                <p className="font-sans text-lg md:text-xl text-foreground/70 font-light leading-relaxed">
-                  {profile.aboutParagraph2}
-                </p>
-              </motion.div>
+                {profile.aboutParagraph2}
+              </motion.p>
             </div>
 
-            {/* Right: Quote Card */}
+            {/* Quote + stats */}
             <div className="lg:col-span-5">
               <motion.div
                 className="sticky top-32"
@@ -127,109 +146,76 @@ export default function AboutSection() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.8 }}
               >
-                {/* Quote block with thick border accent */}
-                <div
-                  className="relative p-8 border-2 overflow-hidden"
-                  style={{ borderColor: 'hsl(327,81%,62%)' }}
-                >
-                  {/* BG fill */}
-                  <div className="absolute inset-0" style={{
-                    background: 'linear-gradient(135deg, hsl(327 81% 62% / 0.06) 0%, transparent 70%)',
-                  }} />
-
-                  {/* Giant quote mark */}
+                {/* Quote card */}
+                <div className="relative p-8 border-2 overflow-hidden hover-glow-pink transition-all duration-300" style={{ borderColor: "rgba(244,63,138,0.4)" }}>
                   <div
-                    className="font-display text-[10rem] leading-none absolute -top-4 -left-2 select-none pointer-events-none"
-                    style={{ color: 'hsl(327,81%,62%)', opacity: 0.15 }}
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ background: "linear-gradient(135deg, rgba(244,63,138,0.06) 0%, transparent 65%)" }}
+                  />
+                  {/* Huge quote mark */}
+                  <div
+                    className="font-display text-[9rem] leading-none absolute -top-3 -left-1 select-none pointer-events-none"
+                    style={{ color: "#f43f8a", opacity: 0.18 }}
                   >
                     "
                   </div>
-
                   <div className="relative z-10">
-                    <p className="font-serif italic text-xl md:text-2xl text-foreground leading-relaxed mb-6">
+                    <p className="font-serif italic text-xl md:text-2xl text-white leading-relaxed mb-5">
                       "{profile.quote}"
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-[2px]" style={{
-                        background: 'linear-gradient(90deg, hsl(327,81%,62%), hsl(271,91%,65%))',
-                      }} />
-                      <span className="font-mono text-xs tracking-[0.2em] uppercase text-foreground/40">
+                      <div
+                        className="w-8 h-[2px]"
+                        style={{ background: "linear-gradient(90deg, #f43f8a, #a855f7)" }}
+                      />
+                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "hsl(220 15% 40%)" }}>
                         Renda Kurnia Manik
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Stats below quote */}
-                <div className="grid grid-cols-3 gap-0 mt-0 border-2 border-t-0" style={{ borderColor: 'hsl(271,91%,65%/0.3)' }}>
+                {/* Stats row */}
+                <div className="grid grid-cols-3 border-2 border-t-0" style={{ borderColor: "rgba(168,85,247,0.25)" }}>
                   {[
-                    { num: "3+", label: "Projects" },
-                    { num: "5+", label: "Roles" },
-                    { num: "2+", label: "Years" },
-                  ].map((stat, i) => (
+                    { num: "3+", label: "Projects", color: "#a855f7" },
+                    { num: "5+", label: "Roles",    color: "#f43f8a" },
+                    { num: "2+", label: "Years",    color: "#f0a500" },
+                  ].map((s, i) => (
                     <div
-                      key={stat.label}
-                      className={`p-5 text-center ${i < 2 ? 'border-r-2' : ''}`}
-                      style={{ borderColor: 'hsl(271,91%,65%/0.2)' }}
+                      key={s.label}
+                      className={`p-5 text-center ${i < 2 ? "border-r-2" : ""}`}
+                      style={{ borderColor: "rgba(168,85,247,0.18)" }}
                     >
-                      <p className="font-display text-4xl" style={{ color: 'hsl(43,96%,56%)' }}>
-                        {stat.num}
-                      </p>
-                      <p className="font-mono text-[10px] tracking-widest uppercase text-foreground/40 mt-1">
-                        {stat.label}
+                      <p className="font-display text-4xl" style={{ color: s.color }}>{s.num}</p>
+                      <p className="font-mono text-[10px] tracking-widest uppercase mt-1" style={{ color: "hsl(220 15% 38%)" }}>
+                        {s.label}
                       </p>
                     </div>
                   ))}
                 </div>
               </motion.div>
             </div>
-
           </div>
         </div>
       </div>
 
-      {/* === BOTTOM MARQUEE === */}
-      <div className="border-t-2 overflow-hidden py-3" style={{
-        borderColor: 'hsl(271,91%,65%/0.3)',
-        background: 'hsl(270 50% 5%)',
-      }}>
-        <div className="flex whitespace-nowrap animate-marquee-slow animate-marquee-reverse">
+      {/* ── Marquee ────────────────────────────────────────── */}
+      <div
+        className="border-t-2 overflow-hidden py-3"
+        style={{ borderColor: "rgba(168,85,247,0.25)", background: "hsl(230 18% 7%)" }}
+      >
+        <div className="flex whitespace-nowrap animate-marquee-reverse">
           {[
-            "Teknik Informatika",
-            "◆",
-            "UMRAH",
-            "◆",
-            "Tanjung Pinang",
-            "◆",
-            "Kepulauan Riau",
-            "◆",
-            "Web Developer",
-            "◆",
-            "Security Researcher",
-            "◆",
-            "Team Leader",
-            "◆",
-            "Teknik Informatika",
-            "◆",
-            "UMRAH",
-            "◆",
-            "Tanjung Pinang",
-            "◆",
-            "Kepulauan Riau",
-            "◆",
-            "Web Developer",
-            "◆",
-            "Security Researcher",
-            "◆",
-            "Team Leader",
-            "◆",
+            "Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆",
+            "Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆",
+            "Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆",
+            "Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆",
           ].map((item, i) => (
             <span
               key={i}
-              className={`flex-shrink-0 font-display text-lg tracking-widest uppercase px-5 ${
-                item === "◆" ? "" : "text-foreground/30"
-              }`}
-              style={item === "◆" ? { color: 'hsl(327,81%,62%)' } : {}}
+              className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-5"
+              style={{ color: item === "◆" ? "#f43f8a" : "rgba(255,255,255,0.2)" }}
             >
               {item}
             </span>

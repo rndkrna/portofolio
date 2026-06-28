@@ -46,41 +46,35 @@
 }
 
 :root {
-  /* === MAXIMALIST DARK PALETTE === */
-  --background: 270 50% 5%;        /* Deep violet-black */
-  --foreground: 45 60% 94%;        /* Warm cream */
-  --border: 280 40% 25%;           /* Violet border */
-  --input: 270 30% 12%;
-  --ring: 271 91% 65%;             /* Electric violet */
+  /* === DARK MAXIMALISM — Vibrant & WOW === */
+  --background: 230 18% 8%;          /* Near-black with slight blue-gray */
+  --foreground: 40 30% 96%;          /* Warm white */
+  --border: 260 25% 22%;
+  --input: 230 15% 12%;
+  --ring: 262 83% 68%;
 
-  --card: 270 40% 8%;
-  --card-foreground: 45 60% 94%;
-  --card-border: 280 40% 20%;
+  --card: 230 18% 11%;
+  --card-foreground: 40 30% 96%;
+  --card-border: 260 20% 18%;
 
-  --popover: 270 40% 8%;
-  --popover-foreground: 45 60% 94%;
-  --popover-border: 280 40% 20%;
+  --popover: 230 18% 10%;
+  --popover-foreground: 40 30% 96%;
+  --popover-border: 260 20% 18%;
 
-  --primary: 271 91% 65%;           /* Electric violet #8b5cf6 */
-  --primary-foreground: 270 50% 5%;
+  --primary: 262 83% 68%;            /* Bright purple #a855f7 */
+  --primary-foreground: 230 18% 8%;
 
-  --secondary: 327 81% 62%;         /* Hot pink #ec4899 */
-  --secondary-foreground: 270 50% 5%;
+  --secondary: 322 89% 65%;          /* Bright pink #f43f8a */
+  --secondary-foreground: 230 18% 8%;
 
-  --muted: 270 30% 15%;
-  --muted-foreground: 45 30% 65%;
+  --muted: 230 15% 15%;
+  --muted-foreground: 220 15% 60%;
 
-  --accent: 43 96% 56%;             /* Neon gold #fbbf24 */
-  --accent-foreground: 270 50% 5%;
+  --accent: 45 100% 60%;             /* Vivid gold #f0a500 */
+  --accent-foreground: 230 18% 8%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-
-  /* Custom maximalist colors */
-  --hot-pink: 327 81% 62%;
-  --neon-gold: 43 96% 56%;
-  --electric-cyan: 188 92% 42%;
-  --lime-green: 84 81% 44%;
 
   --app-font-sans: 'DM Sans', sans-serif;
   --app-font-serif: 'Playfair Display', serif;
@@ -88,6 +82,9 @@
   --radius: 0.25rem;
 }
 
+/* =============================================
+   GLOBAL BASE
+   ============================================= */
 @layer base {
   * {
     @apply border-border;
@@ -95,11 +92,8 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% 0%, hsl(271 91% 65% / 0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 85% 100%, hsl(327 81% 62% / 0.10) 0%, transparent 55%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    background-attachment: fixed;
+    /* Subtle noise texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -111,158 +105,174 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ========================================
-   MAXIMALIST UTILITY CLASSES
-   ======================================== */
+/* =============================================
+   CUSTOM SCROLLBAR
+   ============================================= */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: hsl(230 18% 8%); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(262 83% 68%), hsl(322 89% 65%));
+  border-radius: 4px;
+}
+::selection {
+  background: hsl(262 83% 68% / 0.45);
+  color: hsl(40 30% 96%);
+}
 
-/* Outline / stroke text */
+/* =============================================
+   MAXIMALISM TYPOGRAPHY UTILITIES
+   ============================================= */
+
+/* Outline / Stroke text */
 .text-stroke {
   -webkit-text-stroke: 2px currentColor;
   color: transparent;
 }
-.text-stroke-1 {
-  -webkit-text-stroke: 1px currentColor;
+.text-stroke-thin {
+  -webkit-text-stroke: 1.5px currentColor;
   color: transparent;
 }
-.text-stroke-3 {
+.text-stroke-thick {
   -webkit-text-stroke: 3px currentColor;
   color: transparent;
 }
 
-/* Gradient text presets */
-.text-gradient-violet {
-  background: linear-gradient(135deg, hsl(271 91% 75%) 0%, hsl(327 81% 70%) 100%);
+/* Gradient text helpers */
+.text-grad-primary {
+  background: linear-gradient(135deg, hsl(262 83% 78%) 0%, hsl(322 89% 72%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.text-gradient-gold {
-  background: linear-gradient(135deg, hsl(43 96% 65%) 0%, hsl(35 100% 55%) 100%);
+.text-grad-gold {
+  background: linear-gradient(135deg, hsl(45 100% 68%) 0%, hsl(32 100% 58%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.text-gradient-cyan {
-  background: linear-gradient(135deg, hsl(188 92% 60%) 0%, hsl(210 100% 60%) 100%);
+.text-grad-cyan {
+  background: linear-gradient(135deg, hsl(186 94% 60%) 0%, hsl(220 100% 65%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Maximalist thick borders */
-.border-thick {
-  border-width: 3px;
-}
-.border-thick-4 {
-  border-width: 4px;
-}
-
-/* Noise texture overlay */
-.noise-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1;
-}
+/* =============================================
+   MAXIMALISM BACKGROUND UTILITIES
+   ============================================= */
 
 /* Dot pattern */
 .dot-pattern {
-  background-image: radial-gradient(hsl(271 91% 65% / 0.3) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(hsl(262 83% 68% / 0.25) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
-/* Grid pattern */
+/* Tight dot pattern */
+.dot-pattern-sm {
+  background-image: radial-gradient(hsl(322 89% 65% / 0.2) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+/* Grid lines */
 .grid-pattern {
   background-image:
-    linear-gradient(hsl(271 91% 65% / 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(271 91% 65% / 0.08) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(hsl(262 83% 68% / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(262 83% 68% / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
-/* ========================================
-   MAXIMALIST ANIMATIONS
-   ======================================== */
+/* Diagonal stripes */
+.stripe-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    hsl(262 83% 68% / 0.06) 8px,
+    hsl(262 83% 68% / 0.06) 9px
+  );
+}
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
+/* =============================================
+   MAXIMALISM ANIMATIONS
+   ============================================= */
+
+/* Marquee (horizontal scroll) */
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
-.animate-marquee-slow {
-  animation: marquee 35s linear infinite;
-}
-.animate-marquee-fast {
-  animation: marquee 10s linear infinite;
-}
+.animate-marquee { animation: marquee-left 18s linear infinite; }
+.animate-marquee-slow { animation: marquee-left 30s linear infinite; }
+.animate-marquee-fast { animation: marquee-left 10s linear infinite; }
 
-@keyframes marquee-reverse {
-  0% { transform: translateX(-50%); }
+@keyframes marquee-right {
+  0%   { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
-.animate-marquee-reverse {
-  animation: marquee-reverse 25s linear infinite;
-}
+.animate-marquee-reverse { animation: marquee-right 22s linear infinite; }
 
+/* Float */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+
+/* Slow spin */
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
-}
-.animate-spin-slower {
-  animation: spin-slow 40s linear infinite;
-}
+.animate-spin-slow  { animation: spin-slow 25s linear infinite; }
+.animate-spin-slowr { animation: spin-slow 40s linear infinite reverse; }
 
-@keyframes float-max {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  33%       { transform: translateY(-20px) rotate(3deg); }
-  66%       { transform: translateY(-10px) rotate(-2deg); }
+/* Pulsing glow ring */
+@keyframes glow-ring {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(262 83% 68% / 0.3); }
+  50%       { box-shadow: 0 0 0 12px hsl(262 83% 68% / 0); }
 }
-.animate-float {
-  animation: float-max 8s ease-in-out infinite;
-}
+.animate-glow-ring { animation: glow-ring 2.5s ease-out infinite; }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px hsl(271 91% 65% / 0.4); }
-  50%       { box-shadow: 0 0 50px hsl(271 91% 65% / 0.8), 0 0 100px hsl(271 91% 65% / 0.3); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
+/* Shimmer sweep */
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position:  200% center; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent, hsl(271 91% 65% / 0.4), transparent);
+  background: linear-gradient(90deg,
+    transparent 0%,
+    hsl(262 83% 80% / 0.3) 40%,
+    hsl(322 89% 80% / 0.3) 60%,
+    transparent 100%);
   background-size: 200% auto;
-  animation: shimmer 2s linear infinite;
+  animation: shimmer 2.4s linear infinite;
 }
 
-/* ========================================
-   MAXIMALIST SCROLLBAR
-   ======================================== */
-::-webkit-scrollbar {
-  width: 6px;
+/* Flicker (neon sign feel) */
+@keyframes flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%           { opacity: 0.6; }
+  97%           { opacity: 1; }
+  98%           { opacity: 0.7; }
 }
-::-webkit-scrollbar-track {
-  background: hsl(270 50% 5%);
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, hsl(271 91% 65%), hsl(327 81% 62%));
-  border-radius: 3px;
-}
+.animate-flicker { animation: flicker 5s linear infinite; }
 
-/* ========================================
-   SELECTION COLOR
-   ======================================== */
-::selection {
-  background: hsl(271 91% 65% / 0.4);
-  color: hsl(45 60% 94%);
+/* Border glow on hover */
+.hover-glow:hover {
+  box-shadow:
+    0 0 0 2px hsl(262 83% 68%),
+    0 0 24px hsl(262 83% 68% / 0.4),
+    0 0 60px hsl(262 83% 68% / 0.2);
+}
+.hover-glow-pink:hover {
+  box-shadow:
+    0 0 0 2px hsl(322 89% 65%),
+    0 0 24px hsl(322 89% 65% / 0.4),
+    0 0 60px hsl(322 89% 65% / 0.15);
+}
+.hover-glow-gold:hover {
+  box-shadow:
+    0 0 0 2px hsl(45 100% 60%),
+    0 0 20px hsl(45 100% 60% / 0.4),
+    0 0 50px hsl(45 100% 60% / 0.15);
 }
