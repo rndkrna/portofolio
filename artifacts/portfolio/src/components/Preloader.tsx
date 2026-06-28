@@ -8,7 +8,6 @@ interface PreloaderProps {
 
 export default function Preloader({ onComplete }: PreloaderProps) {
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [imgLoaded, setImgLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/profile", { cache: "no-store" })
@@ -29,171 +28,213 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
+        staggerChildren: 0.12,
+        delayChildren: 0.05,
       },
     },
     exit: {
       y: "-100%",
-      transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const },
+      transition: { duration: 0.9, ease: [0.76, 0, 0.24, 1] as const },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
     },
   };
 
+  const highlights = [
+    { icon: Shield, label: "Cryptographic Systems", sub: "AES-256-GCM · HKDF · Scrypt", color: "hsl(271,91%,65%)" },
+    { icon: Layers, label: "Fullstack Dev", sub: "Laravel · Docker · PostgreSQL", color: "hsl(327,81%,62%)" },
+    { icon: Award, label: "Leadership Role", sub: "BEM Research · PMII Kadrisasi", color: "hsl(43,96%,56%)" },
+  ];
+
   return (
     <motion.div
-      className="fixed inset-x-0 top-0 h-dvh bg-background z-[9999] flex items-start justify-start lg:items-center lg:justify-center overflow-y-auto overflow-x-hidden overscroll-contain px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8 lg:p-0"
+      className="fixed inset-0 z-[9999] overflow-hidden"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
     >
-      {/* Premium ambient glows */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[10%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute -bottom-[10%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-accent/3 blur-[100px]" />
+      {/* === MAXIMALIST BACKGROUND === */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(135deg, hsl(270 50% 4%) 0%, hsl(290 60% 7%) 40%, hsl(270 50% 4%) 100%)',
+      }} />
+
+      {/* Grid pattern */}
+      <div className="absolute inset-0 grid-pattern opacity-60" />
+
+      {/* Giant backdrop text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        <span
+          className="font-display leading-none text-center select-none"
+          style={{
+            fontSize: 'clamp(8rem, 22vw, 28rem)',
+            WebkitTextStroke: '2px hsl(271 91% 65% / 0.07)',
+            color: 'transparent',
+            letterSpacing: '-0.02em',
+          }}
+        >
+          PORTFOLIO
+        </span>
       </div>
 
-      <div className="container mx-auto px-0 md:px-12 relative z-10 w-full max-w-6xl pb-8 sm:pb-10 lg:pb-0">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-center">
-          {/* Column 1: Portrait Cover Card */}
-          <motion.div
-            className="lg:col-span-5 flex justify-center"
-            variants={itemVariants}
-          >
-            <div className="relative group w-full max-w-[14rem] sm:max-w-xs md:max-w-sm">
-              {/* Outer frame border */}
-              <div className="absolute inset-0 border border-primary/20 rounded-lg -m-2 sm:-m-4 pointer-events-none group-hover:scale-[1.02] transition-transform duration-700" />
+      {/* Ambient glows */}
+      <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(271 91% 65% / 0.15) 0%, transparent 70%)' }} />
+      <div className="absolute -bottom-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, hsl(327 81% 62% / 0.12) 0%, transparent 70%)' }} />
 
-              {/* Image Frame with subtle floating animation */}
-              <motion.div
-                className="relative aspect-[4/5] rounded-md overflow-hidden bg-card/40 border border-border/60 shadow-2xl"
-                animate={{
-                  y: [0, -10, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+      {/* === CONTENT === */}
+      <div className="relative z-10 h-full flex items-center overflow-y-auto">
+        <div className="container mx-auto px-6 md:px-12 py-12 max-w-7xl w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+            {/* === LEFT: Portrait Card === */}
+            <motion.div className="lg:col-span-4 flex justify-center lg:justify-start" variants={itemVariants}>
+              <div className="relative w-full max-w-[260px] sm:max-w-[300px]">
+                {/* Decorative corner accent */}
+                <div className="absolute -top-3 -left-3 w-12 h-12 border-t-4 border-l-4 border-[hsl(271,91%,65%)] z-20" />
+                <div className="absolute -bottom-3 -right-3 w-12 h-12 border-b-4 border-r-4 border-[hsl(327,81%,62%)] z-20" />
+
+                {/* Image frame */}
+                <motion.div
+                  className="relative aspect-[3/4] overflow-hidden border-2 border-[hsl(271,91%,65%/0.4)]"
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  {/* Gradient fill when no avatar */}
+                  <div className="absolute inset-0" style={{
+                    background: 'linear-gradient(160deg, hsl(271 91% 25%) 0%, hsl(290 60% 10%) 100%)',
+                  }} />
+
+                  {avatar && (
+                    <img
+                      src={avatar}
+                      alt="Renda Kurnia Manik Portrait"
+                      className="absolute inset-0 w-full h-full object-cover grayscale contrast-110 mix-blend-luminosity"
+                    />
+                  )}
+
+                  {/* Color overlay */}
+                  <div className="absolute inset-0" style={{
+                    background: 'linear-gradient(180deg, transparent 30%, hsl(270 50% 4% / 0.85) 100%)',
+                  }} />
+
+                  {/* Label */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <div className="w-full h-[2px] mb-3" style={{
+                      background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(327,81%,62%))',
+                    }} />
+                    <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-[hsl(271,91%,75%)] mb-1">
+                      Verified Portfolio
+                    </p>
+                    <p className="font-display text-base tracking-widest uppercase text-foreground">
+                      Cover // 2026
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Floating badge */}
+                <motion.div
+                  className="absolute -right-6 top-8 z-20 px-3 py-2 text-[10px] font-sans font-bold uppercase tracking-widest border-2"
+                  style={{
+                    background: 'hsl(43,96%,56%)',
+                    color: 'hsl(270,50%,5%)',
+                    borderColor: 'hsl(43,96%,56%)',
+                  }}
+                  animate={{ rotate: [3, 3] }}
+                >
+                  2026
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* === RIGHT: Info === */}
+            <div className="lg:col-span-8 flex flex-col items-start">
+
+              {/* Top badge */}
+              <motion.div variants={itemVariants} className="mb-5">
+                <span className="inline-flex items-center gap-2 border-2 border-[hsl(271,91%,65%)] px-4 py-1.5 font-mono text-[11px] tracking-[0.3em] uppercase text-[hsl(271,91%,75%)]">
+                  <span className="w-2 h-2 rounded-full bg-[hsl(271,91%,65%)] animate-pulse" />
+                  Introduction · Software Engineer
+                </span>
+              </motion.div>
+
+              {/* Giant Name */}
+              <motion.div variants={itemVariants} className="mb-4 overflow-hidden">
+                <h1 className="font-display uppercase leading-none" style={{ fontSize: 'clamp(3.5rem, 9vw, 8rem)', letterSpacing: '-0.02em' }}>
+                  <span className="block text-foreground">Renda</span>
+                  <span className="block" style={{
+                    WebkitTextStroke: '2px hsl(271 91% 65%)',
+                    color: 'transparent',
+                  }}>
+                    Kurnia
+                  </span>
+                  <span className="block text-gradient-gold">Manik</span>
+                </h1>
+              </motion.div>
+
+              {/* Tagline */}
+              <motion.p
+                variants={itemVariants}
+                className="text-foreground/60 font-sans font-light text-base sm:text-lg max-w-lg mb-8 leading-relaxed border-l-4 border-[hsl(271,91%,65%)] pl-4"
               >
-                {avatar && (
-                  <img
-                    key={avatar}
-                    src={avatar}
-                    alt="Renda Kurnia Manik Portrait"
-                    className="w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] select-none"
-                  />
-                )}
-                {/* Subtle dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
+                Software Engineer & Technical Leader yang memadukan keahlian
+                kriptografi modern dengan rekayasa sistem web terdistribusi.
+              </motion.p>
 
-                {/* Visual Label */}
-                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
-                  <p className="text-[9px] sm:text-[10px] tracking-[0.28em] sm:tracking-[0.3em] uppercase text-primary mb-1 font-mono">
-                    Verified Portfolio
-                  </p>
-                  <p className="text-xs sm:text-sm font-display tracking-widest text-foreground uppercase">
-                    Cover Portrait // 2026
-                  </p>
-                </div>
+              {/* Highlights Grid */}
+              <motion.div
+                variants={itemVariants}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8"
+              >
+                {highlights.map((hl, i) => (
+                  <div
+                    key={hl.label}
+                    className="group/hl border-2 p-4 transition-all duration-300 hover:scale-[1.02] cursor-default"
+                    style={{ borderColor: hl.color + '50' }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 flex items-center justify-center" style={{ background: hl.color + '20' }}>
+                        <hl.icon size={16} style={{ color: hl.color }} />
+                      </div>
+                      <div className="w-full h-px" style={{ background: hl.color + '40' }} />
+                    </div>
+                    <h4 className="text-xs font-sans font-bold uppercase tracking-wider text-foreground mb-1" style={{ color: hl.color }}>
+                      {hl.label}
+                    </h4>
+                    <p className="text-[11px] font-sans text-foreground/50 leading-snug font-mono">
+                      {hl.sub}
+                    </p>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* Enter Button */}
+              <motion.div variants={itemVariants}>
+                <button
+                  onClick={onComplete}
+                  className="group relative overflow-hidden flex items-center gap-3 font-sans font-bold uppercase tracking-[0.25em] text-sm py-4 px-10 hover-target transition-all duration-300"
+                  style={{
+                    background: 'linear-gradient(90deg, hsl(271,91%,65%), hsl(327,81%,62%))',
+                    color: 'hsl(270,50%,5%)',
+                  }}
+                >
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }} />
+                  <span className="relative z-10">Enter Portfolio</span>
+                  <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                </button>
               </motion.div>
             </div>
-          </motion.div>
 
-          {/* Column 2: Highlights and Enter Button */}
-          <div className="lg:col-span-7 flex flex-col justify-center items-start text-left w-full">
-            {/* Title / Name */}
-            <motion.div variants={itemVariants} className="mb-3 sm:mb-4">
-              <span className="text-primary text-[10px] sm:text-xs tracking-[0.35em] sm:tracking-[0.4em] uppercase font-mono block mb-2">
-                Introduction
-              </span>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display uppercase tracking-tight leading-none text-foreground">
-                Renda Kurnia <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40">
-                  Manik
-                </span>
-              </h1>
-            </motion.div>
-
-            {/* Tagline */}
-            <motion.p
-              variants={itemVariants}
-              className="text-muted-foreground font-light text-base sm:text-lg md:text-xl max-w-xl mb-6 sm:mb-10 leading-relaxed"
-            >
-              Software Engineer & Technical Leader yang memadukan keahlian
-              kriptografi modern dengan rekayasa sistem web terdistribusi.
-            </motion.p>
-
-            {/* Spoiler Highlights Grid */}
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full mb-7 sm:mb-12 border-y border-border/30 py-5 sm:py-8"
-            >
-              {/* Highlight 1 */}
-              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Shield className="text-primary" size={17} />
-                </div>
-                <div>
-                  <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
-                    Cryptographic Systems
-                  </h4>
-                  <p className="text-[11px] text-muted-foreground font-light leading-snug">
-                    Implementasi AES-256-GCM, HKDF, & proteksi login server.
-                  </p>
-                </div>
-              </div>
-
-              {/* Highlight 2 */}
-              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Layers className="text-primary" size={17} />
-                </div>
-                <div>
-                  <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
-                    Fullstack Dev
-                  </h4>
-                  <p className="text-[11px] text-muted-foreground font-light leading-snug">
-                    Pembuatan media berita Detik1Aceh & web korporat responsif.
-                  </p>
-                </div>
-              </div>
-
-              {/* Highlight 3 */}
-              <div className="flex flex-row sm:flex-col items-start gap-3 group/hl">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/hl:bg-primary/20 transition-colors">
-                  <Award className="text-primary" size={17} />
-                </div>
-                <div>
-                  <h4 className="text-xs tracking-widest uppercase font-display text-foreground mb-1">
-                    Leadership Role
-                  </h4>
-                  <p className="text-[11px] text-muted-foreground font-light leading-snug">
-                    Memimpin penelitian beasiswa enkripsi & kajian BEM UMRAH.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Enter Button */}
-            <motion.div variants={itemVariants} className="w-full sm:w-auto">
-              <button
-                onClick={onComplete}
-                className="w-full sm:w-auto flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground font-sans uppercase tracking-[0.22em] sm:tracking-[0.25em] text-xs py-3.5 sm:py-4 px-8 sm:px-10 rounded-sm transition-all duration-300 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover-target"
-              >
-                <span>Enter Portfolio</span>
-                <ArrowRight size={16} />
-              </button>
-            </motion.div>
           </div>
         </div>
       </div>

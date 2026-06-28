@@ -3,101 +3,202 @@ import { motion } from 'framer-motion';
 const skillCategories = [
   {
     title: "Programming & Web",
+    emoji: "⌨️",
+    color: "hsl(271,91%,65%)",
+    bg: "hsl(271,91%,65%/0.08)",
+    border: "hsl(271,91%,65%/0.4)",
     skills: ["PHP", "JavaScript", "HTML5", "CSS3", "Bootstrap", "Tailwind CSS"]
   },
   {
     title: "Backend & Systems",
-    skills: ["Laravel", "Docker", "MySQL", "PostgreSQL", "Git / GitHub", "Linux Command-Line"]
+    emoji: "⚙️",
+    color: "hsl(327,81%,62%)",
+    bg: "hsl(327,81%,62%/0.08)",
+    border: "hsl(327,81%,62%/0.4)",
+    skills: ["Laravel", "Docker", "MySQL", "PostgreSQL", "Git / GitHub", "Linux CLI"]
   },
   {
     title: "Leadership & Methods",
-    skills: ["Team Leadership", "Analytical Thinking", "Negotiation", "Public Communication", "Research Methodology", "UML Modeling"]
+    emoji: "🎯",
+    color: "hsl(43,96%,56%)",
+    bg: "hsl(43,96%,56%/0.08)",
+    border: "hsl(43,96%,56%/0.4)",
+    skills: ["Team Leadership", "Analytical Thinking", "Negotiation", "Public Speaking", "Research Methodology", "UML Modeling"]
   }
 ];
 
+// All skills flattened for marquee
+const allSkills = skillCategories.flatMap(c => c.skills.map(s => ({ skill: s, color: c.color })));
+
 export default function SkillsSection() {
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.15
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.8, 
-        ease: [0.16, 1, 0.3, 1] as const,
-        staggerChildren: 0.05
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { duration: 0.4 } 
-    }
-  };
-
   return (
-    <section id="skills" className="py-32 bg-card/10 border-y border-border/40 relative overflow-hidden">
-      {/* Decorative blurred background aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[30vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-0" />
+    <section id="skills" className="relative overflow-hidden">
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <motion.div 
-          className="mb-24 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <p className="text-primary tracking-[0.3em] uppercase text-xs mb-3 font-semibold">Expertise</p>
-          <h2 className="text-4xl md:text-5xl font-display uppercase tracking-wider text-foreground">Capabilities</h2>
-          <div className="w-16 h-px bg-primary/70 mx-auto mt-6"></div>
-        </motion.div>
-
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          {skillCategories.map((category, idx) => (
-            <motion.div 
-              key={category.title}
-              variants={cardVariants}
-              className="flex flex-col bg-card/25 backdrop-blur-sm border border-border/50 hover:border-primary/40 p-8 rounded-md transition-all duration-500 hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:shadow-primary/5 group"
-              whileHover={{ y: -6 }}
-            >
-              <h3 className="text-lg font-display uppercase tracking-widest text-foreground mb-8 border-b border-border/60 pb-4 w-full text-center md:text-left group-hover:text-primary transition-colors duration-300">
-                {category.title}
-              </h3>
-              <ul className="space-y-4 text-center md:text-left w-full flex-grow">
-                {category.skills.map((skill, sIdx) => (
-                  <motion.li 
-                    key={skill}
-                    variants={itemVariants}
-                    className="text-muted-foreground tracking-wide font-light hover:text-foreground transition-colors cursor-default hover-target flex items-center justify-center md:justify-start gap-3 group/item py-1"
-                    whileHover={{ x: 8 }}
+      {/* === SECTION HEADER === */}
+      <div className="relative py-20 border-y-4 overflow-hidden" style={{
+        borderColor: 'hsl(43,96%,56%)',
+        background: 'linear-gradient(135deg, hsl(43 60% 8%) 0%, hsl(270 50% 5%) 60%)',
+      }}>
+        <div className="dot-pattern absolute inset-0 opacity-30" />
+        <div className="container mx-auto px-6 md:px-12 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div className="flex items-start gap-6">
+              <span
+                className="font-display text-[8rem] md:text-[12rem] leading-none"
+                style={{
+                  WebkitTextStroke: '2px hsl(43 96% 56% / 0.3)',
+                  color: 'transparent',
+                }}
+              >
+                02
+              </span>
+              <div className="pt-4 md:pt-8">
+                <p className="font-mono text-xs tracking-[0.3em] uppercase text-[hsl(43,96%,65%)] mb-2">
+                  What I Know
+                </p>
+                <h2 className="font-display uppercase leading-none">
+                  <span
+                    className="block text-7xl md:text-9xl"
+                    style={{
+                      WebkitTextStroke: '2px hsl(43,96%,56%)',
+                      color: 'transparent',
+                    }}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-border group-hover/item:bg-primary transition-colors duration-300" />
-                    <span>{skill}</span>
-                  </motion.li>
-                ))}
-              </ul>
+                    Capa-
+                  </span>
+                  <span className="block text-7xl md:text-9xl text-[hsl(43,96%,56%)]">
+                    bilities
+                  </span>
+                </h2>
+              </div>
+            </div>
+
+            {/* Expertise label */}
+            <motion.div
+              className="hidden md:block"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <div className="border-2 border-[hsl(43,96%,56%/0.4)] p-4 text-right">
+                <p className="font-mono text-xs tracking-widest uppercase text-foreground/40">Expertise</p>
+                <p className="font-display text-2xl text-[hsl(43,96%,56%)] mt-1">3 Domains</p>
+              </div>
             </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* === CARDS GRID === */}
+      <div className="py-20" style={{ background: 'hsl(270 50% 4%)' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-2" style={{ borderColor: 'hsl(271,91%,65%/0.2)' }}>
+            {skillCategories.map((category, idx) => (
+              <motion.div
+                key={category.title}
+                className={`p-8 relative overflow-hidden group/card transition-all duration-500 ${idx < 2 ? 'md:border-r-2' : ''}`}
+                style={{ borderColor: 'hsl(271,91%,65%/0.2)' }}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.7, delay: idx * 0.15 }}
+              >
+                {/* Hover background */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
+                  style={{ background: category.bg }}
+                />
+
+                {/* Corner accent */}
+                <div
+                  className="absolute top-0 right-0 w-16 h-1 transition-all duration-300"
+                  style={{ background: category.color }}
+                />
+
+                <div className="relative z-10">
+                  {/* Card Header */}
+                  <div className="flex items-center gap-3 mb-6 pb-5 border-b-2" style={{ borderColor: category.border }}>
+                    <div
+                      className="w-10 h-10 flex items-center justify-center text-xl border-2 flex-shrink-0"
+                      style={{ borderColor: category.color, background: category.bg }}
+                    >
+                      {category.emoji}
+                    </div>
+                    <h3 className="font-display uppercase text-xl tracking-wider" style={{ color: category.color }}>
+                      {category.title}
+                    </h3>
+                  </div>
+
+                  {/* Skills as pill tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill, sIdx) => (
+                      <motion.span
+                        key={skill}
+                        className="inline-block font-sans font-medium text-xs uppercase tracking-wider px-3 py-1.5 border-2 transition-all duration-200 cursor-default"
+                        style={{
+                          borderColor: category.border,
+                          color: category.color,
+                        }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.1 + sIdx * 0.06 }}
+                        whileHover={{
+                          background: category.color,
+                          color: 'hsl(270,50%,5%)',
+                          scale: 1.05,
+                        }}
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Giant category number backdrop */}
+                <div
+                  className="absolute -bottom-4 -right-2 font-display text-[8rem] leading-none select-none pointer-events-none opacity-5"
+                  style={{ color: category.color }}
+                >
+                  {String(idx + 1).padStart(2, '0')}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* === SKILL MARQUEE === */}
+      <div className="border-t-4 overflow-hidden" style={{
+        borderColor: 'hsl(327,81%,62%)',
+        background: 'hsl(327 40% 6%)',
+      }}>
+        {/* Row 1 */}
+        <div className="flex whitespace-nowrap py-3 border-b border-[hsl(327,81%,62%/0.2)] animate-marquee">
+          {[...allSkills, ...allSkills].map((item, i) => (
+            <span
+              key={i}
+              className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-6"
+              style={{ color: item.color, opacity: 0.7 }}
+            >
+              {item.skill}
+              <span className="mx-3 opacity-30" style={{ color: 'hsl(327,81%,62%)' }}>·</span>
+            </span>
           ))}
-        </motion.div>
+        </div>
+        {/* Row 2 reverse */}
+        <div className="flex whitespace-nowrap py-3 animate-marquee-reverse">
+          {[...allSkills, ...allSkills].reverse().map((item, i) => (
+            <span
+              key={i}
+              className="flex-shrink-0 font-sans font-bold text-sm tracking-widest uppercase px-6"
+              style={{ color: item.color, opacity: 0.5 }}
+            >
+              {item.skill}
+              <span className="mx-3 opacity-20" style={{ color: 'hsl(271,91%,65%)' }}>◆</span>
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
