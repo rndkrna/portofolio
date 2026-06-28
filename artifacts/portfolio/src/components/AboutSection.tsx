@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Award, FolderCode, GraduationCap, Flame } from "lucide-react";
 
 interface ProfileData {
   aboutParagraph1: string;
@@ -7,17 +8,17 @@ interface ProfileData {
   quote: string;
 }
 
-const fallbackProfile: ProfileData = {
+const fallback: ProfileData = {
   aboutParagraph1:
     "Mahasiswa Teknik Informatika yang memadukan keahlian teknis pengembangan perangkat lunak dengan pengalaman kepemimpinan strategis yang solid. Berpengalaman memimpin tim penelitian dan divisi organisasi, serta sukses mengeksekusi proyek web komersial dari tahap negosiasi klien hingga deployment.",
   aboutParagraph2:
-    "Saat ini saya menempuh studi S1 Teknik Informatika di Universitas Maritim Raja Ali Haji (UMRAH) di Tanjung Pinang, Kepulauan Riau. Sebelumnya, saya menempuh pendidikan di SMA Negeri 1 Singkil Utara di jurusan Ilmu Pengetahuan Sosial (IPS). Latar belakang ini membentuk cara pandang saya yang holistik dalam merumuskan solusi teknologi.",
+    "Saat ini saya menempuh studi S1 Teknik Informatika di Universitas Maritim Raja Ali Haji (UMRAH) di Tanjung Pinang, Kepulauan Riau. Sebelumnya, saya menempuh pendidikan di SMAN 1 Singkil Utara jurusan Ilmu Pengetahuan Sosial (IPS).",
   quote:
     "Memadukan keahlian teknis pengembangan perangkat lunak dengan pengalaman kepemimpinan strategis yang solid.",
 };
 
 export default function AboutSection() {
-  const [profile, setProfile] = useState<ProfileData>(fallbackProfile);
+  const [profile, setProfile] = useState<ProfileData>(fallback);
 
   useEffect(() => {
     fetch("/api/profile", { cache: "no-store" })
@@ -26,201 +27,150 @@ export default function AboutSection() {
       .catch(() => {});
   }, []);
 
+  const stats = [
+    { num: "3+", label: "Projects", icon: FolderCode, color: "#c4b5fd", desc: "Commercial Web Apps" },
+    { num: "5+", label: "Roles", icon: Award, color: "#f9a8d4", desc: "Research & Organization" },
+    { num: "2+", label: "Years", icon: Flame, color: "#fde68a", desc: "Active Development" },
+  ];
+
   return (
-    <section id="about" className="relative overflow-hidden">
-
-      {/* ── Header block ───────────────────────────────────── */}
-      <div
-        className="relative py-20 overflow-hidden border-b-4"
-        style={{ borderColor: "#a855f7", background: "linear-gradient(135deg, hsl(262 40% 12%) 0%, hsl(230 18% 8%) 100%)" }}
-      >
-        <div className="dot-pattern absolute inset-0 opacity-50" />
-
-        {/* Top-right accent */}
-        <div
-          className="absolute top-0 right-0 w-32 h-32 pointer-events-none"
-          style={{ background: "linear-gradient(225deg, rgba(168,85,247,0.25) 0%, transparent 70%)" }}
-        />
-
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-
-            {/* Left: giant number + title */}
-            <div className="flex items-start gap-5">
-              <span
-                className="font-display leading-none"
-                style={{
-                  fontSize: "clamp(7rem, 18vw, 14rem)",
-                  WebkitTextStroke: "2px rgba(168,85,247,0.28)",
-                  color: "transparent",
-                }}
-              >
-                01
-              </span>
-              <div className="pt-4 md:pt-8">
-                <p className="font-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: "#a855f7" }}>
-                  Chapter One
-                </p>
-                <h2
-                  className="font-display uppercase leading-none"
-                  style={{ fontSize: "clamp(3.5rem, 8vw, 7.5rem)" }}
-                >
-                  <span className="block text-white">The</span>
-                  <span
-                    className="block"
-                    style={{
-                      background: "linear-gradient(90deg, #a855f7, #f43f8a)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      color: "transparent",
-                    }}
-                  >
-                    Narrative
-                  </span>
-                </h2>
-              </div>
-            </div>
-
-            {/* Right: colored squares */}
-            <motion.div
-              className="hidden md:flex flex-col items-end gap-2"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-            >
-              <div className="flex gap-2">
-                <div className="w-5 h-5" style={{ background: "#a855f7" }} />
-                <div className="w-5 h-5" style={{ background: "#f43f8a" }} />
-                <div className="w-5 h-5" style={{ background: "#f0a500" }} />
-                <div className="w-5 h-5 border-2" style={{ borderColor: "#a855f7" }} />
-              </div>
-              <p className="font-mono text-xs" style={{ color: "hsl(220 15% 35%)" }}>UMRAH · 2022 — Now</p>
-            </motion.div>
-          </div>
-        </div>
+    <section id="about" className="relative py-32 overflow-hidden">
+      {/* Background Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] right-[-10%] w-[55vw] h-[55vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.55) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(219,39,119,0.45) 0%, transparent 70%)' }} />
       </div>
 
-      {/* ── Body ───────────────────────────────────────────── */}
-      <div className="py-24 relative" style={{ background: "hsl(230 18% 8%)" }}>
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        
+        {/* Label */}
+        <motion.div 
+          className="flex items-center gap-4 mb-12" 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }} 
+          transition={{ duration: 0.7 }}
+        >
+          <span className="font-mono text-xs tracking-[0.35em] uppercase" style={{ color: '#c4b5fd' }}>01 — About</span>
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(167,139,250,0.4), transparent)' }} />
+        </motion.div>
 
-            {/* Text */}
-            <div className="lg:col-span-7 space-y-8">
-              <motion.p
-                className="font-sans text-lg md:text-xl font-light leading-relaxed"
-                style={{ color: "hsl(220 15% 65%)" }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8 }}
-              >
-                <span
-                  className="font-display text-7xl float-left mr-3 mt-0 leading-none"
-                  style={{ color: "#a855f7" }}
-                >
+        {/* ── BENTO GRID LAYOUT ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Card 1: Main Header Bento (Takes 2 columns on large screens) */}
+          <motion.div 
+            className="lg:col-span-2 glass rounded-3xl p-8 lg:p-10 flex flex-col justify-between border border-white/10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="space-y-6">
+              <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase">INTRODUCTION</span>
+              <h2 className="font-display uppercase leading-none text-white" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+                The <span style={{ background: 'linear-gradient(90deg, #c4b5fd, #f9a8d4)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Narrative</span>
+              </h2>
+              <p className="font-sans text-lg font-light leading-relaxed text-white/70">
+                <span className="font-display text-5xl float-left mr-3 mt-1 text-[#c4b5fd] leading-none">
                   {profile.aboutParagraph1[0]}
                 </span>
                 {profile.aboutParagraph1.slice(1)}
-              </motion.p>
-
-              <motion.p
-                className="font-sans text-lg md:text-xl font-light leading-relaxed"
-                style={{ color: "hsl(220 15% 65%)" }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, delay: 0.15 }}
-              >
-                {profile.aboutParagraph2}
-              </motion.p>
+              </p>
             </div>
+            
+            <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center gap-6 text-white/40 font-mono text-xs">
+              <div className="flex items-center gap-2">
+                <GraduationCap size={16} className="text-violet-400" />
+                <span>UMRAH · S1 Teknik Informatika</span>
+              </div>
+              <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+              <span>Tanjung Pinang, Riau Islands</span>
+            </div>
+          </motion.div>
 
-            {/* Quote + stats */}
-            <div className="lg:col-span-5">
-              <motion.div
-                className="sticky top-32"
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.8 }}
+          {/* Card 2: Quote Bento (Pink Glass) */}
+          <motion.div 
+            className="glass-pink rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+          >
+            <div className="font-display text-[9rem] leading-none absolute -top-4 -left-2 select-none pointer-events-none text-pink-300 opacity-20">"</div>
+            <div className="relative z-10 space-y-6">
+              <span className="font-mono text-[10px] tracking-widest text-pink-200/50 uppercase">PHILOSOPHY</span>
+              <p className="font-serif italic text-xl leading-relaxed text-white">
+                "{profile.quote}"
+              </p>
+            </div>
+            <div className="relative z-10 flex items-center gap-3 mt-8">
+              <div className="w-6 h-[1.5px] bg-pink-300" />
+              <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-pink-200/60">Renda Kurnia Manik</span>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Story Continuation Bento */}
+          <motion.div 
+            className="glass rounded-3xl p-8 border border-white/10 flex flex-col justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <div className="space-y-4">
+              <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase">BACKGROUND</span>
+              <p className="font-sans text-base font-light leading-relaxed text-white/60">
+                {profile.aboutParagraph2}
+              </p>
+            </div>
+            <div className="mt-8 font-mono text-[10px] text-white/30 uppercase tracking-widest">
+              Securing System Architecture
+            </div>
+          </motion.div>
+
+          {/* Cards 4, 5, 6: Individual Stat Bento Cards */}
+          {stats.map((s, idx) => {
+            const Icon = s.icon;
+            return (
+              <motion.div 
+                key={s.label}
+                className="glass rounded-3xl p-6 border border-white/10 flex items-center gap-5 transition-all duration-300 hover:scale-[1.02]"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: idx * 0.1 + 0.25 }}
               >
-                {/* Quote card */}
-                <div className="relative p-8 border-2 overflow-hidden hover-glow-pink transition-all duration-300" style={{ borderColor: "rgba(244,63,138,0.4)" }}>
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{ background: "linear-gradient(135deg, rgba(244,63,138,0.06) 0%, transparent 65%)" }}
-                  />
-                  {/* Huge quote mark */}
-                  <div
-                    className="font-display text-[9rem] leading-none absolute -top-3 -left-1 select-none pointer-events-none"
-                    style={{ color: "#f43f8a", opacity: 0.18 }}
-                  >
-                    "
-                  </div>
-                  <div className="relative z-10">
-                    <p className="font-serif italic text-xl md:text-2xl text-white leading-relaxed mb-5">
-                      "{profile.quote}"
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-[2px]"
-                        style={{ background: "linear-gradient(90deg, #f43f8a, #a855f7)" }}
-                      />
-                      <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "hsl(220 15% 40%)" }}>
-                        Renda Kurnia Manik
-                      </span>
-                    </div>
-                  </div>
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" 
+                  style={{ background: s.color + '15', border: `1px solid ${s.color}35`, color: s.color }}>
+                  <Icon size={24} />
                 </div>
-
-                {/* Stats row */}
-                <div className="grid grid-cols-3 border-2 border-t-0" style={{ borderColor: "rgba(168,85,247,0.25)" }}>
-                  {[
-                    { num: "3+", label: "Projects", color: "#a855f7" },
-                    { num: "5+", label: "Roles",    color: "#f43f8a" },
-                    { num: "2+", label: "Years",    color: "#f0a500" },
-                  ].map((s, i) => (
-                    <div
-                      key={s.label}
-                      className={`p-5 text-center ${i < 2 ? "border-r-2" : ""}`}
-                      style={{ borderColor: "rgba(168,85,247,0.18)" }}
-                    >
-                      <p className="font-display text-4xl" style={{ color: s.color }}>{s.num}</p>
-                      <p className="font-mono text-[10px] tracking-widest uppercase mt-1" style={{ color: "hsl(220 15% 38%)" }}>
-                        {s.label}
-                      </p>
-                    </div>
-                  ))}
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-3xl text-white">{s.num}</span>
+                    <span className="font-sans font-bold text-xs uppercase tracking-wider" style={{ color: s.color }}>{s.label}</span>
+                  </div>
+                  <p className="font-sans text-xs text-white/40 mt-0.5">{s.desc}</p>
                 </div>
               </motion.div>
-            </div>
+            );
+          })}
+
+        </div>
+
+        {/* Marquee Strip */}
+        <div className="mt-24 overflow-hidden py-3.5 glass" style={{ borderRadius: 0 }}>
+          <div className="flex whitespace-nowrap animate-marquee-reverse">
+            {["Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆","Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆",
+              "Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆","Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆"].map((item, i) => (
+              <span key={i} className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-5"
+                style={{ color: item === "◆" ? 'rgba(249,168,212,0.6)' : 'rgba(255,255,255,0.28)' }}>{item}</span>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* ── Marquee ────────────────────────────────────────── */}
-      <div
-        className="border-t-2 overflow-hidden py-3"
-        style={{ borderColor: "rgba(168,85,247,0.25)", background: "hsl(230 18% 7%)" }}
-      >
-        <div className="flex whitespace-nowrap animate-marquee-reverse">
-          {[
-            "Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆",
-            "Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆",
-            "Teknik Informatika","◆","UMRAH","◆","Tanjung Pinang","◆",
-            "Kepulauan Riau","◆","Web Developer","◆","Security Researcher","◆","Team Leader","◆",
-          ].map((item, i) => (
-            <span
-              key={i}
-              className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-5"
-              style={{ color: item === "◆" ? "#f43f8a" : "rgba(255,255,255,0.2)" }}
-            >
-              {item}
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );

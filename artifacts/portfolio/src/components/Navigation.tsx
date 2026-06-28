@@ -3,19 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
 const links = [
-  { name: 'About', href: '#about', color: 'hover:text-[hsl(271,91%,75%)]' },
-  { name: 'Skills', href: '#skills', color: 'hover:text-[hsl(43,96%,65%)]' },
-  { name: 'Work', href: '#work', color: 'hover:text-[hsl(327,81%,70%)]' },
-  { name: 'Experience', href: '#experience', color: 'hover:text-[hsl(188,92%,60%)]' },
-  { name: 'Contact', href: '#contact', color: 'hover:text-[hsl(84,81%,55%)]' },
-];
-
-const mobileColors = [
-  'text-[hsl(271,91%,75%)]',
-  'text-[hsl(43,96%,65%)]',
-  'text-[hsl(327,81%,70%)]',
-  'text-[hsl(188,92%,60%)]',
-  'text-[hsl(84,81%,55%)]',
+  { name: 'About',      href: '#about' },
+  { name: 'Skills',     href: '#skills' },
+  { name: 'Work',       href: '#work' },
+  { name: 'Experience', href: '#experience' },
+  { name: 'Contact',    href: '#contact' },
 ];
 
 export default function Navigation() {
@@ -23,79 +15,112 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const handler = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', handler);
+    return () => window.removeEventListener('scroll', handler);
   }, []);
 
   const scrollTo = (href: string) => {
     setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <>
       <motion.nav
         className={`fixed top-0 w-full z-[100] transition-all duration-500 ${
-          scrolled
-            ? 'bg-[hsl(270,50%,5%)/95] backdrop-blur-xl border-b-4 border-[hsl(271,91%,65%)] py-3'
-            : 'bg-transparent py-5'
+          scrolled ? 'py-3' : 'py-5 bg-transparent'
         }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        style={scrolled ? {
+          background: 'rgba(15,12,36,0.65)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 4px 30px rgba(0,0,0,0.4)',
+        } : {}}
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-          {/* Logo — maximalist badge style */}
+          {/* Logo */}
           <a
             href="#hero"
-            onClick={(e) => { e.preventDefault(); scrollTo('#hero'); }}
-            className="relative group hover-target"
+            onClick={e => { e.preventDefault(); scrollTo('#hero'); }}
+            className="group hover-target"
           >
-            <div className="flex items-center gap-2">
-              {/* Color accent square */}
-              <div className="w-3 h-8 bg-gradient-to-b from-[hsl(271,91%,65%)] to-[hsl(327,81%,62%)] flex-shrink-0" />
-              <span className="text-lg font-display tracking-widest uppercase text-foreground group-hover:text-[hsl(271,91%,75%)] transition-colors duration-300 leading-none">
-                Renda<br />
-                <span className="text-[hsl(43,96%,56%)]">Kurnia</span>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-display tracking-widest"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(167,139,250,0.35), rgba(244,114,182,0.25))',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  color: '#a78bfa',
+                }}
+              >
+                RK
+              </div>
+              <span className="font-display text-base tracking-widest uppercase text-white/80 group-hover:text-white transition-colors">
+                Renda Kurnia
               </span>
             </div>
           </a>
 
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex gap-1">
-            {links.map((link, i) => (
+          {/* Desktop nav */}
+          <ul className="hidden md:flex items-center gap-1">
+            {links.map(link => (
               <li key={link.name}>
                 <a
                   href={link.href}
-                  onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
-                  className={`relative text-sm font-sans font-semibold tracking-widest uppercase text-foreground/70 ${link.color} transition-all duration-200 hover-target px-4 py-2 block group`}
+                  onClick={e => { e.preventDefault(); scrollTo(link.href); }}
+                  className="relative px-4 py-2 text-sm font-sans font-medium tracking-wide text-white/60 hover:text-white transition-colors hover-target group block"
                 >
-                  <span className="relative z-10">{link.name}</span>
-                  {/* Bold underline on hover */}
-                  <span className="absolute bottom-0 left-4 right-4 h-[3px] bg-current scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left" />
+                  {link.name}
+                  <span
+                    className="absolute bottom-1 left-4 right-4 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+                    style={{ background: 'linear-gradient(90deg, #a78bfa, #f472b6)' }}
+                  />
                 </a>
               </li>
             ))}
           </ul>
 
-          {/* CTA */}
+          {/* CTA button */}
           <a
             href="#contact"
-            onClick={(e) => { e.preventDefault(); scrollTo('#contact'); }}
-            className="hidden md:flex items-center gap-2 bg-[hsl(271,91%,65%)] hover:bg-[hsl(271,91%,72%)] text-[hsl(270,50%,5%)] font-sans font-bold uppercase tracking-widest text-xs py-2.5 px-5 transition-all duration-200 hover-target"
+            onClick={e => { e.preventDefault(); scrollTo('#contact'); }}
+            className="hidden md:flex items-center gap-2 font-sans font-semibold text-sm tracking-wider px-5 py-2.5 rounded-full transition-all duration-300 hover-target hover-glow-violet"
+            style={{
+              background: 'linear-gradient(135deg, rgba(167,139,250,0.25), rgba(244,114,182,0.15))',
+              border: '1px solid rgba(167,139,250,0.4)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              color: '#a78bfa',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, #a78bfa, #f472b6)';
+              (e.currentTarget as HTMLElement).style.color = '#0f0c24';
+              (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(167,139,250,0.25), rgba(244,114,182,0.15))';
+              (e.currentTarget as HTMLElement).style.color = '#a78bfa';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(167,139,250,0.4)';
+            }}
           >
             Hire Me
           </a>
 
-          {/* Mobile Toggle */}
+          {/* Mobile toggle */}
           <button
-            className="md:hidden text-foreground hover-target p-2 border-2 border-[hsl(271,91%,65%)]"
+            className="md:hidden p-2 rounded-lg hover-target transition-all"
+            style={{
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              color: 'rgba(255,255,255,0.8)',
+            }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -103,79 +128,70 @@ export default function Navigation() {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu — full screen maximalist */}
+      {/* Mobile menu — frosted overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            className="fixed inset-0 z-[90] flex flex-col justify-center items-center overflow-hidden"
+            className="fixed inset-0 z-[90] flex flex-col justify-center items-center"
             style={{
-              background: 'linear-gradient(135deg, hsl(270 50% 5%) 0%, hsl(290 60% 8%) 50%, hsl(270 50% 5%) 100%)',
+              background: 'rgba(10,8,28,0.85)',
+              backdropFilter: 'blur(30px)',
+              WebkitBackdropFilter: 'blur(30px)',
             }}
-            initial={{ opacity: 0, clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' }}
-            animate={{ opacity: 1, clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}
-            exit={{ opacity: 0, clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' }}
-            transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            {/* Decorative big number backdrop */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-              <span
-                className="text-[40vw] font-display leading-none select-none"
-                style={{
-                  WebkitTextStroke: '2px hsl(271 91% 65% / 0.08)',
-                  color: 'transparent',
-                }}
-              >
-                MENU
-              </span>
-            </div>
+            {/* Orbs inside menu */}
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full pointer-events-none animate-orb-1"
+              style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%)' }} />
+            <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full pointer-events-none animate-orb-2"
+              style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%)' }} />
 
-            {/* Dot pattern */}
-            <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
-
-            {/* Close button */}
             <button
-              className="absolute top-6 right-6 text-foreground p-2 border-2 border-[hsl(271,91%,65%)] hover:bg-[hsl(271,91%,65%)] hover:text-[hsl(270,50%,5%)] transition-all"
+              className="absolute top-6 right-6 p-2.5 rounded-xl hover-target"
+              style={{
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                color: 'rgba(255,255,255,0.7)',
+              }}
               onClick={() => setMobileMenuOpen(false)}
             >
-              <X size={24} />
+              <X size={22} />
             </button>
 
-            <ul className="flex flex-col gap-2 text-center relative z-10">
+            <ul className="flex flex-col gap-3 text-center relative z-10 w-full max-w-xs px-6">
               {links.map((link, i) => (
                 <motion.li
                   key={link.name}
-                  initial={{ opacity: 0, x: -60 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 60 }}
-                  transition={{ delay: i * 0.07 + 0.1, duration: 0.4 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: i * 0.07 + 0.05 }}
                 >
                   <a
                     href={link.href}
-                    onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
-                    className={`text-6xl font-display uppercase tracking-widest block px-8 py-2 text-stroke-1 text-foreground/30 hover:text-foreground hover:no-underline transition-all duration-200 ${mobileColors[i]}`}
-                    style={{ WebkitTextStroke: '0px' }}
+                    onClick={e => { e.preventDefault(); scrollTo(link.href); }}
+                    className="block w-full py-4 rounded-2xl font-display text-3xl tracking-widest uppercase text-white/70 hover:text-white transition-all duration-200 hover-target"
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(167,139,250,0.18), rgba(244,114,182,0.12))';
+                      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(167,139,250,0.35)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                    }}
                   >
-                    <span className={`${mobileColors[i]} font-display text-6xl block hover:tracking-normal transition-all`}>
-                      {link.name}
-                    </span>
+                    {link.name}
                   </a>
                 </motion.li>
               ))}
             </ul>
-
-            {/* Bottom social row */}
-            <motion.div
-              className="absolute bottom-8 left-0 right-0 flex justify-center gap-6 text-xs font-sans tracking-widest uppercase text-muted-foreground"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <span>GitHub</span>
-              <span className="text-[hsl(271,91%,65%)]">·</span>
-              <span>LinkedIn</span>
-              <span className="text-[hsl(327,81%,62%)]">·</span>
-              <span>Website</span>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

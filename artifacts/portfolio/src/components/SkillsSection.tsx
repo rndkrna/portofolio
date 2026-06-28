@@ -1,28 +1,36 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Terminal, Database, Users, ChevronRight, Award } from 'lucide-react';
 
 const skillCategories = [
   {
+    id: "programming",
     title: "Programming & Web",
     emoji: "⌨️",
-    color: "#a855f7",
-    borderAlpha: "rgba(168,85,247,0.4)",
-    bgAlpha: "rgba(168,85,247,0.06)",
+    icon: Terminal,
+    color: "#c4b5fd",
+    glassClass: "glass-violet",
+    desc: "Building highly interactive frontend interfaces and responsive architectures.",
     skills: ["PHP", "JavaScript", "HTML5", "CSS3", "Bootstrap", "Tailwind CSS"]
   },
   {
+    id: "backend",
     title: "Backend & Systems",
     emoji: "⚙️",
-    color: "#f43f8a",
-    borderAlpha: "rgba(244,63,138,0.4)",
-    bgAlpha: "rgba(244,63,138,0.06)",
+    icon: Database,
+    color: "#f9a8d4",
+    glassClass: "glass-pink",
+    desc: "Designing secure relational databases, server APIs, and deployment pipelines.",
     skills: ["Laravel", "Docker", "MySQL", "PostgreSQL", "Git / GitHub", "Linux CLI"]
   },
   {
+    id: "leadership",
     title: "Leadership & Methods",
     emoji: "🎯",
-    color: "#f0a500",
-    borderAlpha: "rgba(240,165,0,0.4)",
-    bgAlpha: "rgba(240,165,0,0.06)",
+    icon: Users,
+    color: "#fde68a",
+    glassClass: "glass-gold",
+    desc: "Leading organizational divisions, research groups, and client negotiations.",
     skills: ["Team Leadership", "Analytical Thinking", "Negotiation", "Public Speaking", "Research Methodology", "UML Modeling"]
   }
 ];
@@ -30,155 +38,192 @@ const skillCategories = [
 const allSkills = skillCategories.flatMap(c => c.skills.map(s => ({ skill: s, color: c.color })));
 
 export default function SkillsSection() {
+  const [activeTab, setActiveTab] = useState(skillCategories[0].id);
+
+  const activeCategory = skillCategories.find(c => c.id === activeTab)!;
+
   return (
-    <section id="skills" className="relative overflow-hidden">
+    <section id="skills" className="relative py-32 overflow-hidden">
+      {/* Local Orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[10%] left-[20%] w-[55vw] h-[55vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%)' }} />
+        <div className="absolute bottom-[10%] right-[-10%] w-[50vw] h-[50vw] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, transparent 70%)' }} />
+      </div>
 
-      {/* ── Header ─────────────────────────────────────── */}
-      <div
-        className="relative py-20 overflow-hidden border-y-4"
-        style={{ borderColor: "#f0a500", background: "linear-gradient(135deg, hsl(42 45% 9%) 0%, hsl(230 18% 8%) 100%)" }}
-      >
-        <div className="dot-pattern-sm absolute inset-0 opacity-50" />
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        
+        {/* Section label */}
+        <motion.div className="flex items-center gap-4 mb-6"
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+        >
+          <span className="font-mono text-xs tracking-[0.35em] uppercase" style={{ color: '#fde68a' }}>02 — Capabilities</span>
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(251,191,36,0.4), transparent)' }} />
+        </motion.div>
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        {/* Heading + Subtitle */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end mb-16">
+          <motion.div 
+            className="lg:col-span-8"
+            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+          >
+            <h2 className="font-display uppercase leading-none" style={{ fontSize: 'clamp(3.5rem, 7vw, 6.5rem)' }}>
+              <span className="block text-white">Technical & Leadership</span>
+              <span className="block" style={{ background: 'linear-gradient(90deg, #fde68a, #fb923c)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>
+                Expertise
+              </span>
+            </h2>
+          </motion.div>
+          <motion.div 
+            className="lg:col-span-4 lg:text-right"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+          >
+            <p className="font-sans text-sm font-light text-white/50 leading-relaxed">
+              Sebuah sinergi dari full-stack development, cryptographic system research, dan organisasi tim.
+            </p>
+          </motion.div>
+        </div>
 
-            <div className="flex items-start gap-5">
-              <span
-                className="font-display leading-none"
+        {/* Dynamic Bento Tab Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-20">
+          
+          {/* Left Column: Tab Selectors (Takes 5/12) */}
+          <div className="lg:col-span-5 flex flex-col gap-4">
+            {skillCategories.map((cat, idx) => {
+              const Icon = cat.icon;
+              const isActive = cat.id === activeTab;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveTab(cat.id)}
+                  className={`w-full text-left p-6 rounded-2xl transition-all duration-300 flex items-center justify-between border hover-target ${
+                    isActive 
+                      ? 'bg-white/10 border-white/20 shadow-lg translate-x-2' 
+                      : 'bg-white/5 border-white/5 opacity-60 hover:opacity-100 hover:bg-white/8'
+                  }`}
+                  style={{
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                  }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-transform group-hover:scale-105"
+                      style={{ 
+                        background: isActive ? cat.color + '25' : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${isActive ? cat.color + '50' : 'rgba(255,255,255,0.1)'}`,
+                        color: cat.color 
+                      }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <div>
+                      <span className="font-mono text-[10px] text-white/40 block mb-0.5">DOMAIN 0{idx+1}</span>
+                      <h3 className="font-display uppercase text-lg tracking-wider text-white">
+                        {cat.title}
+                      </h3>
+                    </div>
+                  </div>
+                  <ChevronRight size={18} className={`transition-transform duration-300 text-white/30 ${isActive ? 'rotate-90 text-white' : ''}`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Display Panel (Takes 7/12) */}
+          <div className="lg:col-span-7">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4 }}
+                className={`${activeCategory.glassClass} p-8 rounded-3xl relative overflow-hidden border border-white/10`}
                 style={{
-                  fontSize: "clamp(7rem, 18vw, 14rem)",
-                  WebkitTextStroke: "2px rgba(240,165,0,0.25)",
-                  color: "transparent",
+                  minHeight: '340px',
+                  boxShadow: `0 24px 60px ${activeCategory.color}15`,
                 }}
               >
-                02
-              </span>
-              <div className="pt-4 md:pt-8">
-                <p className="font-mono text-xs tracking-[0.3em] uppercase mb-2" style={{ color: "#f0a500" }}>
-                  What I Know
-                </p>
-                <h2
-                  className="font-display uppercase leading-none"
-                  style={{ fontSize: "clamp(3.5rem, 8vw, 7.5rem)" }}
+                {/* Big decorative symbol/background element */}
+                <div 
+                  className="absolute -bottom-8 -right-6 font-display text-[12rem] leading-none select-none pointer-events-none opacity-[0.06]"
+                  style={{ color: activeCategory.color }}
                 >
-                  <span
-                    className="block"
-                    style={{ WebkitTextStroke: "2px #f0a500", color: "transparent" }}
-                  >
-                    Capa-
-                  </span>
-                  <span className="block" style={{ color: "#f0a500" }}>bilities</span>
-                </h2>
-              </div>
-            </div>
+                  {activeCategory.emoji}
+                </div>
 
-            <motion.div
-              className="hidden md:block border-2 p-4 text-right"
-              style={{ borderColor: "rgba(240,165,0,0.35)" }}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <p className="font-mono text-xs tracking-widest uppercase" style={{ color: "hsl(220 15% 35%)" }}>Expertise</p>
-              <p className="font-display text-2xl mt-1" style={{ color: "#f0a500" }}>3 Domains</p>
-            </motion.div>
-          </div>
-        </div>
-      </div>
+                <div className="relative z-10 space-y-6">
+                  {/* Category Description */}
+                  <div className="space-y-2">
+                    <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase">DOMAIN HIGHLIGHT</span>
+                    <h4 className="font-display text-3xl text-white uppercase tracking-wide">{activeCategory.title}</h4>
+                    <p className="font-sans text-sm font-light leading-relaxed text-white/60 max-w-md">
+                      {activeCategory.desc}
+                    </p>
+                  </div>
 
-      {/* ── Cards ──────────────────────────────────────── */}
-      <div className="py-20" style={{ background: "hsl(230 18% 8%)" }}>
-        <div className="container mx-auto px-6 md:px-12">
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 border-2"
-            style={{ borderColor: "rgba(168,85,247,0.18)" }}
-          >
-            {skillCategories.map((cat, idx) => (
-              <motion.div
-                key={cat.title}
-                className={`p-8 relative overflow-hidden group/card transition-all duration-500 ${idx < 2 ? "md:border-r-2" : ""}`}
-                style={{ borderColor: "rgba(168,85,247,0.15)" }}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.7, delay: idx * 0.15 }}
-              >
-                {/* Hover bg */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: cat.bgAlpha }}
-                />
-                {/* Top accent bar */}
-                <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: cat.color }} />
+                  <div className="w-full h-px bg-white/10" />
 
-                <div className="relative z-10">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 mb-6 pb-5 border-b-2" style={{ borderColor: cat.borderAlpha }}>
-                    <div
-                      className="w-10 h-10 flex items-center justify-center text-xl border-2"
-                      style={{ borderColor: cat.color + "60", background: cat.bgAlpha }}
-                    >
-                      {cat.emoji}
+                  {/* Skills Grid */}
+                  <div className="space-y-3">
+                    <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase block mb-1">CORE COMPETENCIES</span>
+                    <div className="flex flex-wrap gap-2.5">
+                      {activeCategory.skills.map((skill, sIdx) => (
+                        <motion.span
+                          key={skill}
+                          className="inline-block font-sans font-semibold text-xs uppercase tracking-wider px-4 py-2 rounded-full border cursor-default transition-all duration-200"
+                          style={{ 
+                            background: activeCategory.color + '12', 
+                            border: `1px solid ${activeCategory.color}35`, 
+                            color: activeCategory.color 
+                          }}
+                          whileHover={{ 
+                            background: activeCategory.color, 
+                            color: '#1e0030', 
+                            scale: 1.05,
+                            boxShadow: `0 8px 20px ${activeCategory.color}35`
+                          }}
+                        >
+                          {skill}
+                        </motion.span>
+                      ))}
                     </div>
-                    <h3 className="font-display uppercase text-xl tracking-wider" style={{ color: cat.color }}>
-                      {cat.title}
-                    </h3>
-                  </div>
-
-                  {/* Skill tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {cat.skills.map((skill, sIdx) => (
-                      <motion.span
-                        key={skill}
-                        className="inline-block font-sans font-semibold text-xs uppercase tracking-wider px-3 py-1.5 border-2 cursor-default transition-all duration-200"
-                        style={{ borderColor: cat.borderAlpha, color: cat.color }}
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1 + sIdx * 0.05 }}
-                        whileHover={{ background: cat.color, color: "hsl(230 18% 8%)", scale: 1.04 }}
-                      >
-                        {skill}
-                      </motion.span>
-                    ))}
                   </div>
                 </div>
 
-                {/* Giant number backdrop */}
-                <div
-                  className="absolute -bottom-4 -right-2 font-display text-[7rem] leading-none select-none pointer-events-none opacity-[0.04]"
-                  style={{ color: cat.color }}
-                >
-                  {String(idx + 1).padStart(2, "0")}
-                </div>
+                {/* Corner light source */}
+                <div className="absolute -bottom-10 -right-10 w-44 h-44 rounded-full pointer-events-none" 
+                  style={{ background: activeCategory.color + '15', filter: 'blur(30px)' }} />
               </motion.div>
-            ))}
+            </AnimatePresence>
+          </div>
+
+        </div>
+
+        {/* Skills Marquee Container */}
+        <div className="glass overflow-hidden rounded-2xl border border-white/10">
+          <div className="overflow-hidden py-3.5 border-b border-white/5">
+            <div className="flex whitespace-nowrap animate-marquee">
+              {[...allSkills, ...allSkills].map((item, i) => (
+                <span key={i} className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-6" style={{ color: item.color, opacity: 0.75 }}>
+                  {item.skill}<span className="mx-3 opacity-30">·</span>
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="overflow-hidden py-3.5">
+            <div className="flex whitespace-nowrap animate-marquee-reverse">
+              {[...allSkills, ...allSkills].reverse().map((item, i) => (
+                <span key={i} className="flex-shrink-0 font-sans font-bold text-sm tracking-widest uppercase px-6" style={{ color: item.color, opacity: 0.45 }}>
+                  {item.skill}<span className="mx-3 opacity-25">◆</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ── Dual marquee ───────────────────────────────── */}
-      <div
-        className="border-t-4 overflow-hidden"
-        style={{ borderColor: "#f43f8a", background: "hsl(322 20% 6%)" }}
-      >
-        {/* Row 1 */}
-        <div className="flex whitespace-nowrap py-3 border-b border-[rgba(244,63,138,0.18)] animate-marquee">
-          {[...allSkills, ...allSkills].map((item, i) => (
-            <span key={i} className="flex-shrink-0 font-display text-lg tracking-widest uppercase px-6" style={{ color: item.color, opacity: 0.7 }}>
-              {item.skill}<span className="mx-3 opacity-30" style={{ color: "#f43f8a" }}>·</span>
-            </span>
-          ))}
-        </div>
-        {/* Row 2 reverse */}
-        <div className="flex whitespace-nowrap py-3 animate-marquee-reverse">
-          {[...allSkills, ...allSkills].reverse().map((item, i) => (
-            <span key={i} className="flex-shrink-0 font-sans font-bold text-sm tracking-widest uppercase px-6" style={{ color: item.color, opacity: 0.45 }}>
-              {item.skill}<span className="mx-3 opacity-25" style={{ color: "#a855f7" }}>◆</span>
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );
